@@ -1,0 +1,3186 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#A8371D">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="S'TOURS PPT">
+<meta name="application-name" content="S'TOURS PPT">
+<meta name="description" content="Générateur de présentations de circuits touristiques S'TOURS DMC">
+<link rel="manifest" id="pwa-manifest">
+<!-- Apple touch icons inline SVG as data URI -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='38' fill='%23A8371D'/%3E%3Ctext x='96' y='115' text-anchor='middle' font-size='90' font-family='serif'%3E✈%3C/text%3E%3Ctext x='96' y='158' text-anchor='middle' font-size='22' font-family='sans-serif' fill='white' font-weight='bold'%3ES'TOURS%3C/text%3E%3C/svg%3E">
+
+<title>S'TOURS – Générateur de Présentation</title>
+<script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+:root{
+  --r:#A8371D; --rh:#8c2d17; --rl:#c4412166;
+  --warm:#FFFEE9; --card:#F7F1DC; --line:#DDD5BA;
+  --blk:#141414; --drk:#3A3A3A; --mid:#6B6B6B; --lgt:#AAA;
+  --wh:#FFFFFF; --grn:#2D7A4F;
+  --radius:12px; --shadow:0 2px 16px rgba(0,0,0,.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,sans-serif;background:#EAE2CA;color:var(--drk);min-height:100vh}
+
+/* ── HEADER ── */
+header{
+  background:var(--warm);border-bottom:3px solid var(--r);
+  padding:0 36px;height:62px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:200;
+  box-shadow:0 2px 12px rgba(0,0,0,.09);
+}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-icon{width:36px;height:36px;background:var(--r);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px}
+.logo-name{font-family:'Playfair Display',Georgia,serif;font-size:22px;color:var(--r);line-height:1}
+.logo-sub{font-size:9px;color:var(--mid);letter-spacing:.16em;text-transform:uppercase;margin-top:1px}
+
+.header-right{display:flex;align-items:center;gap:12px}
+
+/* Language selector */
+.lang-select{
+  display:flex;align-items:center;gap:6px;
+  background:var(--card);border:1.5px solid var(--line);border-radius:8px;
+  padding:5px 10px 5px 8px;cursor:pointer;font-size:13px;font-weight:600;color:var(--drk);
+  transition:border-color .15s;
+}
+.lang-select:hover{border-color:var(--r)}
+#langSelect{border:none;background:transparent;font-size:13px;font-weight:600;color:var(--drk);cursor:pointer;outline:none;font-family:inherit}
+.lang-flag{font-size:18px}
+
+.header-badge{background:var(--r);color:#fff;padding:5px 14px;border-radius:20px;font-size:11.5px;font-weight:700;letter-spacing:.05em}
+
+/* ── MAIN ── */
+.main{max-width:940px;margin:0 auto;padding:28px 20px 80px}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:2px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:4px;margin-bottom:24px}
+.tab-btn{
+  flex:1;padding:9px 6px;border:none;background:none;border-radius:7px;
+  cursor:pointer;font-size:12.5px;font-weight:700;color:var(--mid);
+  transition:all .18s;font-family:inherit;white-space:nowrap;
+}
+.tab-btn.active{background:var(--r);color:#fff;box-shadow:0 2px 8px var(--rl)}
+.tab-btn:hover:not(.active){background:var(--line);color:var(--drk)}
+.tab-panel{display:none}
+.tab-panel.active{display:block;animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* ── CARDS ── */
+.card{background:var(--warm);border:1px solid var(--line);border-radius:var(--radius);padding:24px;margin-bottom:16px;box-shadow:var(--shadow)}
+.card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--r);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:6px}
+
+/* ── FORMS ── */
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.fr3{grid-template-columns:1fr 1fr 1fr}
+.fr1{grid-template-columns:1fr}
+.fg{display:flex;flex-direction:column;gap:5px}
+label{font-size:10.5px;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:.07em}
+input[type=text],textarea{
+  padding:9px 12px;border:1.5px solid var(--line);border-radius:8px;
+  font-size:13.5px;color:var(--drk);background:#fff;
+  transition:border-color .15s;font-family:inherit;width:100%;
+}
+input[type=text]:focus,textarea:focus{outline:none;border-color:var(--r);box-shadow:0 0 0 3px rgba(168,55,29,.1)}
+textarea{resize:vertical;min-height:82px;line-height:1.5}
+
+/* ── IMAGE UPLOAD ── */
+.img-upload-zone{
+  border:2px dashed var(--line);border-radius:8px;background:#fff;
+  padding:14px;display:flex;align-items:center;gap:10px;cursor:pointer;
+  transition:all .18s;
+}
+.img-upload-zone:hover{border-color:var(--r);background:rgba(168,55,29,.03)}
+.img-upload-zone.has-image{border-style:solid;border-color:var(--r);background:rgba(168,55,29,.04)}
+.img-thumb{width:52px;height:38px;object-fit:cover;border-radius:5px;display:none;flex-shrink:0}
+.img-thumb.show{display:block}
+.img-info{flex:1;min-width:0}
+.img-name{font-size:12px;font-weight:600;color:var(--drk);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.img-hint{font-size:11px;color:var(--lgt)}
+.img-btn{background:var(--r);color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:11.5px;font-weight:700;cursor:pointer;flex-shrink:0;font-family:inherit}
+.img-btn:hover{background:var(--rh)}
+.img-clear{background:none;border:none;color:var(--lgt);cursor:pointer;font-size:16px;padding:2px;flex-shrink:0}
+.img-clear:hover{color:#c0392b}
+
+/* ── TAGS ── */
+.tags-wrap{display:flex;flex-wrap:wrap;gap:5px;align-items:center;padding:7px 10px;border:1.5px solid var(--line);border-radius:8px;background:#fff;cursor:text;min-height:42px;transition:border-color .15s}
+.tags-wrap:focus-within{border-color:var(--r);box-shadow:0 0 0 3px rgba(168,55,29,.1)}
+.tag{display:inline-flex;align-items:center;gap:4px;color:#fff;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:600;background:var(--r)}
+.tag-grn{background:var(--grn)}
+.tag button{background:none;border:none;color:#fff;cursor:pointer;font-size:13px;line-height:1;padding:0;opacity:.8}
+.tag button:hover{opacity:1}
+.tag-inp{border:none;outline:none;font-size:13px;color:var(--drk);background:transparent;min-width:120px;flex:1;padding:2px 0;font-family:inherit}
+.hint{font-size:11px;color:var(--lgt);margin-top:3px}
+
+/* ── DAY CARDS ── */
+.day-card{border:1.5px solid var(--line);border-radius:10px;margin-bottom:10px;background:#fff;overflow:hidden;transition:box-shadow .15s}
+.day-card:hover{box-shadow:0 4px 12px rgba(0,0,0,.06)}
+.day-hdr{display:flex;align-items:center;justify-content:space-between;padding:11px 15px;background:var(--card);cursor:pointer;user-select:none;border-bottom:1px solid transparent}
+.day-card.open .day-hdr{border-bottom-color:var(--line)}
+.day-badge{background:var(--r);color:#fff;width:60px;height:24px;border-radius:12px;font-size:10.5px;font-weight:700;letter-spacing:.05em;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.day-prev{font-size:13px;font-weight:600;color:var(--drk);flex:1;margin:0 10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.day-chevron{color:var(--r);font-size:14px;transition:transform .2s;flex-shrink:0}
+.day-card.open .day-chevron{transform:rotate(180deg)}
+.day-body{padding:18px;display:none}
+.day-card.open .day-body{display:block}
+
+/* ── BUTTONS ── */
+.btn{padding:9px 20px;border-radius:8px;border:none;font-size:13px;font-weight:700;cursor:pointer;transition:all .18s;display:inline-flex;align-items:center;gap:7px;font-family:inherit}
+.btn-r{background:var(--r);color:#fff}
+.btn-r:hover{background:var(--rh);transform:translateY(-1px);box-shadow:0 4px 12px rgba(168,55,29,.3)}
+.btn-sec{background:var(--card);color:var(--drk);border:1px solid var(--line)}
+.btn-sec:hover{background:var(--line)}
+.btn-del{background:#fff;color:#c0392b;border:1px solid #f5c6c6;font-size:11px;padding:5px 10px}
+.btn-del:hover{background:#fff0f0}
+.btn-add{background:var(--warm);color:var(--r);border:1.5px dashed var(--r);width:100%;margin-top:6px;justify-content:center;padding:10px}
+.btn-add:hover{background:#fff5f3}
+
+/* ── EXPORT BAR ── */
+.export-bar{
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--blk);padding:12px 24px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  z-index:100;box-shadow:0 -4px 20px rgba(0,0,0,.2);
+}
+.export-bar .ex-info{color:#fff;font-size:13px;opacity:.8}
+.export-bar .ex-info strong{color:var(--warm)}
+.export-btns{display:flex;gap:10px}
+.btn-ppt{background:var(--r);color:#fff;border:none;padding:10px 26px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px;font-family:inherit;transition:all .18s}
+.btn-ppt:hover{background:var(--rh);transform:translateY(-1px);box-shadow:0 4px 16px rgba(168,55,29,.4)}
+.btn-ppt:disabled{background:#555;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-pdf{background:#333;color:#fff;border:1px solid #555;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:7px;font-family:inherit;transition:all .18s}
+.btn-pdf:hover{background:#444}
+
+/* ── GENERATE TAB ── */
+.gen-hero{text-align:center;padding:32px 20px 24px}
+.gen-hero h2{font-family:'Playfair Display',serif;font-size:26px;color:var(--blk);margin-bottom:8px}
+.gen-hero p{color:var(--mid);font-size:14px;line-height:1.65;margin-bottom:0}
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+.si{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:11px 13px}
+.si-l{font-size:10px;color:var(--lgt);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px}
+.si-v{font-size:14px;font-weight:700;color:var(--drk)}
+.progress-wrap{margin-top:10px}
+.progress-label{font-size:12px;color:var(--mid);margin-bottom:6px;display:flex;justify-content:space-between}
+.progress-bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:var(--r);border-radius:3px;transition:width .4s ease}
+
+/* ── NOTIF ── */
+.notif{position:fixed;top:80px;right:20px;padding:13px 18px;border-radius:10px;font-size:13px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.2);opacity:0;transform:translateX(20px);transition:all .3s;pointer-events:none;z-index:999;max-width:320px;line-height:1.4}
+.notif.show{opacity:1;transform:none}
+.notif.ok{background:var(--grn);color:#fff}
+.notif.err{background:#8a1a1a;color:#fff}
+.notif.info{background:var(--blk);color:var(--warm)}
+
+.nav-row{display:flex;justify-content:space-between;gap:10px;margin-top:10px}
+code{background:var(--card);padding:2px 6px;border-radius:4px;font-size:11px;font-family:monospace;color:var(--r);border:1px solid var(--line)}
+
+/* Loading overlay */
+.loading{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:300;flex-direction:column;gap:16px}
+.loading.show{display:flex}
+.spinner{width:48px;height:48px;border:4px solid rgba(255,255,255,.2);border-top-color:var(--r);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading p{color:#fff;font-size:15px;font-weight:600}
+
+@media(max-width:640px){
+  .fr,.fr3{grid-template-columns:1fr}
+  .summary-grid{grid-template-columns:1fr 1fr}
+  header{padding:0 16px}
+  .main{padding:16px 12px 100px}
+  .export-bar{flex-direction:column;padding:10px 16px;gap:8px}
+  .export-btns{width:100%}
+  .btn-ppt,.btn-pdf{flex:1;justify-content:center}
+}
+
+
+
+/* ══ MICROSOFT O365 INTEGRATION ══ */
+
+/* Header MS button (not signed in) */
+.ms-signin-btn{
+  display:inline-flex;align-items:center;gap:0;
+  border:none;border-radius:3px;cursor:pointer;
+  overflow:hidden;font-family:'Segoe UI',Arial,sans-serif;
+  box-shadow:0 1px 6px rgba(0,0,0,.2);
+  transition:box-shadow .15s,transform .1s;
+  height:36px;
+}
+.ms-signin-btn:hover{box-shadow:0 3px 12px rgba(0,0,0,.28);transform:translateY(-1px)}
+.ms-signin-btn:active{transform:none}
+.ms-signin-icon{background:#2F2F2F;width:36px;height:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ms-signin-label{background:#2F2F2F;color:#fff;padding:0 16px;font-size:13px;font-weight:600;height:36px;display:flex;align-items:center;border-left:1px solid rgba(255,255,255,.12);white-space:nowrap}
+
+/* Header profile (signed in) */
+.ms-profile{display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 8px 4px 4px;border-radius:20px;background:var(--card);border:1.5px solid var(--line);transition:border-color .15s;position:relative}
+.ms-profile:hover{border-color:#0078D4}
+.ms-profile:hover .ms-profile-dropdown{display:block}
+.ms-avatar{width:30px;height:30px;border-radius:50%;background:#0078D4;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700;flex-shrink:0;overflow:hidden}
+.ms-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.ms-uname{font-size:12px;font-weight:600;color:var(--drk);max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ms-connected-dot{width:8px;height:8px;border-radius:50%;background:#107C10;flex-shrink:0;box-shadow:0 0 0 2px #fff}
+
+.ms-profile-dropdown{display:none;position:absolute;top:calc(100% + 8px);right:0;background:#fff;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.18);border:1px solid #e0e0e0;min-width:260px;z-index:500;overflow:hidden}
+.ms-dropdown-head{background:#0078D4;padding:16px;color:#fff}
+.ms-dropdown-name{font-size:14px;font-weight:700}
+.ms-dropdown-email{font-size:11px;opacity:.8;margin-top:2px}
+.ms-dropdown-apps{display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid #f0f0f0}
+.ms-app-item{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;transition:background .12s;font-size:12.5px;font-weight:600;color:#333;border-bottom:1px solid #f5f5f5}
+.ms-app-item:hover{background:#f5f9ff}
+.ms-app-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.ms-dropdown-actions{padding:10px 12px;display:flex;flex-direction:column;gap:4px}
+.ms-dropdown-btn{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:7px;cursor:pointer;font-size:12px;color:var(--drk);transition:background .12s;border:none;background:none;font-family:inherit;width:100%;text-align:left}
+.ms-dropdown-btn:hover{background:#f0f0f0}
+.ms-dropdown-signout{color:#c0392b}
+.ms-dropdown-signout:hover{background:#fff5f5}
+
+/* O365 Feature panels (slide-down banners) */
+.o365-banner{background:#fff;border:1px solid #DDD5BA;border-left:4px solid #0078D4;border-radius:10px;margin-bottom:14px;overflow:hidden;transition:all .3s}
+.o365-banner-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer}
+.o365-banner-head h4{font-size:13px;font-weight:700;color:#141414;display:flex;align-items:center;gap:8px}
+.o365-banner-body{padding:0 14px 14px;display:none}
+.o365-banner.open .o365-banner-body{display:block}
+
+/* OneDrive quick-insert strip */
+.od-strip{display:flex;gap:8px;overflow-x:auto;padding:4px 0;scrollbar-width:thin}
+.od-strip-card{flex-shrink:0;width:90px;background:var(--card);border:1.5px solid var(--line);border-radius:8px;overflow:hidden;cursor:pointer;transition:all .15s}
+.od-strip-card:hover{border-color:var(--r);transform:scale(1.04)}
+.od-strip-card img{width:90px;height:62px;object-fit:cover;display:block}
+.od-strip-card .od-strip-name{font-size:9px;padding:3px 5px;color:var(--drk);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* O365 status bar */
+.o365-status{display:none;align-items:center;gap:8px;padding:7px 14px;background:#E6F2FB;border-bottom:1px solid #b3d5f0;font-size:12px;color:#004e8c;font-weight:500}
+.o365-status.show{display:flex}
+.o365-status-dot{width:8px;height:8px;border-radius:50%;background:#107C10;flex-shrink:0}
+
+@media(max-width:600px){
+  .ms-uname{display:none}
+  .ms-signin-label{font-size:12px;padding:0 10px}
+}
+
+/* ── LIBRARY = ONEDRIVE BDD MEDIA ── */
+.lib-signin{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center;gap:0}
+.lib-signin-logo{width:72px;height:72px;background:#fff;border-radius:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(0,0,0,.12);margin-bottom:18px}
+.lib-signin h3{font-size:18px;font-weight:700;color:#141414;margin-bottom:8px}
+.lib-signin p{font-size:13px;color:#6B6B6B;line-height:1.6;margin-bottom:24px;max-width:340px}
+.lib-signin p strong{color:#141414}
+.lib-ms-btn{display:inline-flex;align-items:center;gap:0;border:none;border-radius:4px;cursor:pointer;overflow:hidden;box-shadow:0 3px 12px rgba(0,0,0,.22);font-family:'Segoe UI',Arial,sans-serif;transition:box-shadow .15s,transform .1s;width:min(300px,100%)}
+.lib-ms-btn:hover{box-shadow:0 6px 22px rgba(0,0,0,.3);transform:translateY(-1px)}
+.lib-ms-btn:active{transform:none;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.lib-ms-icon{background:#2F2F2F;padding:12px 14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.lib-ms-text{background:#2F2F2F;color:#fff;padding:12px 22px;font-size:15px;font-weight:600;flex:1;text-align:left;letter-spacing:.01em;border-left:1px solid rgba(255,255,255,.12)}
+.lib-ms-text small{font-size:10.5px;font-weight:400;color:rgba(255,255,255,.6);display:block;margin-top:1px}
+.lib-signin-note{font-size:10.5px;color:#aaa;margin-top:18px;line-height:1.6;max-width:300px}
+
+/* Browser header */
+.lib-browser-head{display:flex;align-items:center;gap:10px;padding:0 0 12px;border-bottom:1px solid var(--line);margin-bottom:12px;flex-wrap:wrap}
+.lib-user-badge{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:5px 12px 5px 7px;font-size:12px;font-weight:600;color:var(--drk)}
+.lib-user-avatar{width:24px;height:24px;background:#0078D4;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;font-weight:700}
+.lib-signout{background:none;border:1px solid var(--line);border-radius:6px;padding:5px 10px;font-size:11px;color:var(--mid);cursor:pointer;font-family:inherit}
+.lib-signout:hover{border-color:#c0392b;color:#c0392b}
+.lib-path-row{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--mid);flex:1;min-width:0;overflow-x:auto;white-space:nowrap;padding:3px 0}
+.lib-crumb{color:var(--r);font-weight:600;cursor:pointer}
+.lib-crumb:hover{text-decoration:underline}
+
+/* Toolbar */
+.lib-toolbar{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center}
+.lib-search{flex:1;min-width:160px;padding:8px 12px 8px 34px;border:1.5px solid var(--line);border-radius:8px;font-size:13px;color:var(--drk);background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%236B6B6B' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") 9px center no-repeat;font-family:inherit}
+.lib-search:focus{outline:none;border-color:var(--r)}
+.lib-view-btn{background:var(--card);border:1.5px solid var(--line);border-radius:7px;padding:7px 11px;font-size:13px;cursor:pointer;color:var(--mid);transition:all .15s}
+.lib-view-btn.active{background:var(--r);color:#fff;border-color:var(--r)}
+
+/* Photo grid (destination folders) */
+.lib-folder-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-top:4px}
+.lib-folder-card{background:#fff;border:1.5px solid var(--line);border-radius:11px;overflow:hidden;cursor:pointer;transition:all .18s;text-align:center}
+.lib-folder-card:hover{border-color:var(--r);transform:translateY(-2px);box-shadow:0 6px 18px rgba(168,55,29,.14)}
+.lib-folder-thumb{width:100%;height:80px;object-fit:cover;display:block}
+.lib-folder-emoji{width:100%;height:80px;display:flex;align-items:center;justify-content:center;font-size:36px;background:var(--card)}
+.lib-folder-info{padding:8px}
+.lib-folder-name{font-size:11.5px;font-weight:700;color:#141414;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lib-folder-count{font-size:10px;color:var(--mid);margin-top:1px}
+
+/* Photo grid inside folder */
+.lib-photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-top:4px}
+.lib-photo-card{border:2px solid var(--line);border-radius:9px;overflow:hidden;cursor:pointer;transition:all .15s;position:relative;background:#f0f0f0}
+.lib-photo-card:hover{border-color:var(--r);box-shadow:0 4px 14px rgba(168,55,29,.18)}
+.lib-photo-card.selected{border-color:var(--r);box-shadow:0 0 0 3px rgba(168,55,29,.25)}
+.lib-photo-img{width:100%;height:90px;object-fit:cover;display:block}
+.lib-photo-name{font-size:9.5px;color:var(--drk);padding:4px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:#fff}
+.lib-photo-check{position:absolute;top:5px;right:5px;width:20px;height:20px;border-radius:50%;background:var(--r);color:#fff;font-size:11px;font-weight:700;display:none;align-items:center;justify-content:center}
+.lib-photo-card.selected .lib-photo-check{display:flex}
+.lib-use-btn{position:absolute;bottom:24px;left:0;right:0;background:rgba(168,55,29,.9);color:#fff;font-size:10px;font-weight:700;text-align:center;padding:4px 0;display:none;cursor:pointer}
+.lib-photo-card:hover .lib-use-btn{display:block}
+
+/* Footer action bar */
+.lib-action-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 0 0;border-top:1px solid var(--line);margin-top:10px;gap:8px;flex-wrap:wrap}
+.lib-sel-count{font-size:12px;color:var(--mid)}
+.lib-sel-count strong{color:var(--r)}
+
+/* Loading */
+.lib-spinner{width:36px;height:36px;border:3px solid var(--line);border-top-color:var(--r);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px}
+.lib-loading{text-align:center;padding:40px 20px;color:var(--mid);font-size:13px}
+
+/* Save button in export bar */
+.btn-save{background:#2D7A4F;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:7px;font-family:inherit;transition:all .18s}
+.btn-save:hover{background:#256040;transform:translateY(-1px)}
+
+
+/* ── ONEDRIVE PICKER ── */
+.od-modal{position:fixed;inset:0;z-index:600;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.55)}
+.od-modal.show{display:flex}
+.od-sheet{background:var(--warm);border-radius:18px 18px 0 0;width:100%;max-width:680px;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 -8px 40px rgba(0,0,0,.25)}
+.od-header{padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);flex-shrink:0}
+.od-header h3{font-size:15px;font-weight:700;color:var(--blk);display:flex;align-items:center;gap:8px}
+.od-close{background:none;border:none;font-size:22px;color:var(--mid);cursor:pointer;padding:0 4px;line-height:1}
+.od-close:hover{color:var(--r)}
+.od-toolbar{padding:10px 16px;display:flex;gap:8px;align-items:center;border-bottom:1px solid var(--line);flex-shrink:0;flex-wrap:wrap}
+.od-search{flex:1;min-width:160px;padding:8px 12px 8px 32px;border:1.5px solid var(--line);border-radius:8px;font-size:13px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%236B6B6B' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") 9px center no-repeat;font-family:inherit;color:var(--drk)}
+.od-search:focus{outline:none;border-color:var(--r)}
+.od-breadcrumb{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--mid);padding:6px 16px;border-bottom:1px solid var(--line);flex-shrink:0;overflow-x:auto;white-space:nowrap}
+.od-crumb{color:var(--r);cursor:pointer;font-weight:600}
+.od-crumb:hover{text-decoration:underline}
+.od-grid{flex:1;overflow-y:auto;padding:12px 14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:8px}
+.od-item{border:1.5px solid var(--line);border-radius:10px;padding:8px;cursor:pointer;transition:all .15s;background:#fff;text-align:center}
+.od-item:hover{border-color:var(--r);background:rgba(168,55,29,.03);transform:scale(1.02)}
+.od-item.folder{background:var(--card)}.od-item.folder .od-icon{font-size:32px;margin-bottom:4px}
+.od-item.selected{border-color:var(--r);background:rgba(168,55,29,.08);box-shadow:0 0 0 2px rgba(168,55,29,.2)}
+.od-icon{font-size:30px;margin-bottom:5px;display:block}
+.od-img-thumb{width:100%;height:70px;object-fit:cover;border-radius:6px;margin-bottom:5px}
+.od-name{font-size:10.5px;font-weight:600;color:var(--drk);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+.od-size{font-size:9.5px;color:var(--lgt);margin-top:1px}
+.od-footer{padding:12px 16px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;gap:10px}
+.od-sel-info{font-size:12px;color:var(--mid)}
+.od-sel-info strong{color:var(--r)}
+.od-state{padding:30px;text-align:center;color:var(--mid);font-size:13px;grid-column:1/-1}
+.od-spinner{width:32px;height:32px;border:3px solid var(--line);border-top-color:var(--r);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px}
+
+/* OneDrive button in img zone */
+.od-btn{background:var(--card);color:var(--r);border:1.5px solid var(--r);border-radius:6px;padding:6px 10px;font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0;font-family:inherit;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.od-btn:hover{background:rgba(168,55,29,.08)}
+
+/* Auth panel */
+.od-auth{padding:28px 20px 20px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:0}
+.od-auth-logo{width:64px;height:64px;background:#fff;border-radius:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.12);margin-bottom:16px}
+.od-auth h4{font-size:17px;font-weight:700;color:#141414;margin-bottom:6px}
+.od-auth-sub{font-size:12.5px;color:#6B6B6B;margin-bottom:22px;line-height:1.55}
+.od-auth-sub strong{color:#141414}
+
+/* ── BIG MICROSOFT SIGN IN BUTTON ── */
+.btn-ms365{
+  display:inline-flex;align-items:center;gap:0;
+  border:none;border-radius:4px;cursor:pointer;
+  overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.18);
+  font-family:'Segoe UI',Arial,sans-serif;
+  transition:box-shadow .15s,transform .1s;
+  text-decoration:none;
+  width:min(320px,100%);
+}
+.btn-ms365:hover{box-shadow:0 4px 16px rgba(0,0,0,.25);transform:translateY(-1px)}
+.btn-ms365:active{transform:translateY(0)}
+.btn-ms365-icon{
+  background:#2F2F2F;padding:11px 13px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0
+}
+.btn-ms365-text{
+  background:#2F2F2F;color:#fff;
+  padding:11px 20px;font-size:15px;font-weight:600;
+  flex:1;text-align:left;letter-spacing:.01em;
+  border-left:1px solid rgba(255,255,255,.12)
+}
+.btn-ms365-text span{font-size:11px;font-weight:400;color:rgba(255,255,255,.65);display:block;margin-top:1px}
+
+
+
+
+.od-auth-note{font-size:10px;color:var(--lgt);margin-top:14px;line-height:1.5;max-width:300px}
+
+
+/* ── PWA / Mobile improvements ── */
+@media(max-width:480px){
+  .tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab-btn{padding:9px 10px;font-size:11.5px}
+  .export-bar{padding:10px 12px}
+  .btn-ppt{font-size:13px;padding:10px 18px}
+  header{height:54px}
+  .main{padding:16px 12px 90px}
+  .card{padding:18px 14px}
+  /* Bigger touch targets */
+  .img-btn{padding:8px 14px;font-size:12px}
+  input[type=text],textarea{font-size:16px!important} /* Prevent zoom on iOS */
+  /* Bottom safe area for iPhone X+ */
+  .export-bar{padding-bottom:max(10px, env(safe-area-inset-bottom));}
+}
+/* Standalone mode (installed PWA) */
+@media(display-mode:standalone){
+  header{padding-top:env(safe-area-inset-top,0);height:calc(62px + env(safe-area-inset-top,0))}
+  .export-bar{padding-bottom:calc(10px + env(safe-area-inset-bottom,0))}
+}
+/* Smooth scrolling + overscroll behavior */
+html{scroll-behavior:smooth;overscroll-behavior:contain}
+body{-webkit-tap-highlight-color:transparent}
+
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div class="loading" id="loading">
+  <div class="spinner"></div>
+  <p id="loading-msg">Génération en cours…</p>
+</div>
+
+<!-- O365 STATUS BAR -->
+<div class="o365-status" id="o365-status-bar">
+  <div class="o365-status-dot"></div>
+  <span id="o365-status-text">Connecté à Microsoft 365 — OneDrive BDD MEDIA disponible</span>
+  <span style="margin-left:auto;display:flex;gap:12px;font-size:11px;opacity:.8">
+    <span>☁️ OneDrive</span><span>📧 Outlook</span><span>💬 Teams</span>
+  </span>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">✈</div>
+    <div>
+      <div class="logo-name">S'TOURS</div>
+      <div class="logo-sub">Destination Management Company</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="lang-select">
+      <span class="lang-flag" id="langFlag">🇫🇷</span>
+      <select id="langSelect" onchange="setLang(this.value)">
+        <option value="fr">Français</option>
+        <option value="en">English</option>
+        <option value="it">Italiano</option>
+        <option value="de">Deutsch</option>
+        <option value="zh">中文</option>
+        <option value="pt">Português</option>
+        <option value="es">Español</option>
+      </select>
+    </div>
+
+    <!-- NOT SIGNED IN → big button -->
+    <button class="ms-signin-btn" id="ms-header-signin" onclick="msSignIn()" title="Se connecter à Microsoft 365">
+      <div class="ms-signin-icon">
+        <svg width="18" height="18" viewBox="0 0 21 21"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
+      </div>
+      <span class="ms-signin-label">Sign in — OneDrive</span>
+    </button>
+
+    <!-- SIGNED IN → profile avatar + dropdown -->
+    <div class="ms-profile" id="ms-header-profile" style="display:none">
+      <div class="ms-avatar" id="ms-header-avatar">J</div>
+      <span class="ms-uname" id="ms-header-uname">Chargement…</span>
+      <div class="ms-connected-dot"></div>
+
+      <!-- Dropdown -->
+      <div class="ms-profile-dropdown">
+        <div class="ms-dropdown-head">
+          <div class="ms-dropdown-name" id="dd-name">Équipe S'TOURS</div>
+          <div class="ms-dropdown-email" id="dd-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="670d490e0c15081214081214140e27141308121514490a06">[email&#160;protected]</a></div>
+        </div>
+        <!-- O365 Apps grid -->
+        <div class="ms-dropdown-apps">
+          <div class="ms-app-item" onclick="msOpenApp('onedrive')">
+            <div class="ms-app-icon" style="background:#0078D4">☁️</div>OneDrive
+          </div>
+          <div class="ms-app-item" onclick="msOpenApp('outlook')">
+            <div class="ms-app-icon" style="background:#0072C6">📧</div>Outlook
+          </div>
+          <div class="ms-app-item" onclick="window.open('https://onedrive.live.com','_blank')">
+            <div class="ms-app-icon" style="background:#0078D4">☁️</div>OneDrive.com
+          </div>
+          <div class="ms-app-item" onclick="msOpenApp('teams')">
+            <div class="ms-app-icon" style="background:#6264A7">💬</div>Teams
+          </div>
+          <div class="ms-app-item" onclick="msOpenApp('word')">
+            <div class="ms-app-icon" style="background:#185ABD">📝</div>Word
+          </div>
+          <div class="ms-app-item" onclick="msOpenApp('excel')">
+            <div class="ms-app-icon" style="background:#107C41">📈</div>Excel
+          </div>
+        </div>
+        <!-- Actions -->
+        <div class="ms-dropdown-actions">
+          <button class="ms-dropdown-btn" onclick="switchTab('lib');document.querySelector('.ms-profile-dropdown').style.display='none'">☁️ Ouvrir BDD MEDIA Photos</button>
+          <button class="ms-dropdown-btn" onclick="msSaveToDrive()">💾 Sauvegarder dans OneDrive</button>
+          <button class="ms-dropdown-btn" onclick="msShareViaOutlook()">📧 Partager par Outlook</button>
+          <button class="ms-dropdown-btn" onclick="msShareViaTeams()">💬 Envoyer via Teams</button>
+          <hr style="border:none;border-top:1px solid #f0f0f0;margin:4px 0">
+          <button class="ms-dropdown-btn ms-dropdown-signout" onclick="msSignOut()">↪ Se déconnecter</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</header>
+
+<div class="main">
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn" id="tb-lib" onclick="switchTab('lib')">☁️ <span data-i="tab_lib">Photos OneDrive</span></button>
+    <button class="tab-btn active" id="tb0" onclick="switchTab(0)">① <span data-i="tab0">Général</span></button>
+    <button class="tab-btn" id="tb1" onclick="switchTab(1)">② <span data-i="tab1">Programme</span></button>
+    <button class="tab-btn" id="tb2" onclick="switchTab(2)">③ <span data-i="tab2">Services</span></button>
+    <button class="tab-btn" id="tb3" onclick="switchTab(3)">④ <span data-i="tab3">Générer</span></button>
+  </div>
+
+
+  <!-- ══════ TAB LIBRARY ══════ -->
+  <!-- ══ O365 CONNECTED FEATURES BANNER ══ -->
+  <div id="o365-features-panel" style="display:none;margin-bottom:16px">
+
+    <!-- OneDrive Recent Photos -->
+    <div class="o365-banner open" id="banner-od">
+      <div class="o365-banner-head" onclick="this.parentElement.classList.toggle('open')">
+        <h4><span style="background:#0078D4;color:#fff;border-radius:5px;padding:2px 7px;font-size:10px;font-weight:700">OneDrive</span> Dernières photos BDD MEDIA</h4>
+        <span style="font-size:18px;color:var(--mid)">›</span>
+      </div>
+      <div class="o365-banner-body">
+        <div class="od-strip" id="od-recent-strip">
+          <div style="font-size:12px;color:var(--mid);padding:8px">Chargement des photos récentes…</div>
+        </div>
+        <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-sec" style="font-size:12px;padding:7px 14px" onclick="switchTab('lib')">☁️ Ouvrir BDD MEDIA</button>
+          <span style="font-size:11px;color:var(--mid);align-self:center">Cliquez une photo pour l'ajouter au circuit</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Outlook Integration -->
+    <div class="o365-banner" id="banner-outlook">
+      <div class="o365-banner-head" onclick="this.parentElement.classList.toggle('open')">
+        <h4><span style="background:#0072C6;color:#fff;border-radius:5px;padding:2px 7px;font-size:10px;font-weight:700">Outlook</span> Partager la présentation</h4>
+        <span style="font-size:18px;color:var(--mid)">›</span>
+      </div>
+      <div class="o365-banner-body">
+        <div class="fr" style="gap:8px;flex-wrap:wrap">
+          <div class="fg">
+            <label style="font-size:11px;color:var(--mid)">Destinataire</label>
+            <input type="email" id="outlook-to" placeholder="client@example.com" style="width:100%;padding:8px;border:1.5px solid var(--line);border-radius:7px;font-size:13px;font-family:inherit">
+          </div>
+          <div class="fg">
+            <label style="font-size:11px;color:var(--mid)">Objet</label>
+            <input type="text" id="outlook-subject" placeholder="Votre circuit S'TOURS — Maroc" style="width:100%;padding:8px;border:1.5px solid var(--line);border-radius:7px;font-size:13px;font-family:inherit">
+          </div>
+        </div>
+        <button class="btn btn-r" style="margin-top:8px;font-size:12px;padding:8px 18px" onclick="msShareViaOutlook()">📧 Créer email Outlook</button>
+      </div>
+    </div>
+
+    <!-- Teams Integration -->
+    <div class="o365-banner" id="banner-teams">
+      <div class="o365-banner-head" onclick="this.parentElement.classList.toggle('open')">
+        <h4><span style="background:#6264A7;color:#fff;border-radius:5px;padding:2px 7px;font-size:10px;font-weight:700">Teams</span> Partager dans un canal</h4>
+        <span style="font-size:18px;color:var(--mid)">›</span>
+      </div>
+      <div class="o365-banner-body">
+        <p style="font-size:12.5px;color:var(--mid);margin-bottom:10px">Envoyez le circuit directement dans un canal Teams S'TOURS.</p>
+        <button class="btn btn-sec" style="font-size:12px;padding:8px 16px" onclick="msShareViaTeams()">💬 Partager dans Teams</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="tab-panel" id="tp-lib">
+    <div class="card" style="padding:0;overflow:hidden;border-radius:14px">
+
+      <!-- ═══ CONNEXION — S'TOURS ÉQUIPE ═══ -->
+      <div id="lib-signin-panel" style="background:var(--warm)">
+        <div style="padding:22px 20px 18px;max-width:580px">
+
+          <!-- Header -->
+          <div style="display:flex;align-items:center;gap:11px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--line)">
+            <div style="width:46px;height:46px;background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <svg width="28" height="28" viewBox="0 0 21 21"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
+            </div>
+            <div>
+              <div style="font-size:15px;font-weight:700;color:#141414">Bibliothèque Photos BDD MEDIA</div>
+              <div style="font-size:11.5px;color:#6B6B6B;margin-top:1px">Pour toute l'équipe S'TOURS — <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="573679343f363c3e2517242338222524793a36">[email&#160;protected]</a> et collaborateurs</div>
+            </div>
+          </div>
+
+          <!-- ══ MÉTHODE PRINCIPALE : LIEN DE PARTAGE ══ -->
+          <div style="background:#EBF5FB;border:1.5px solid #7DC3EE;border-radius:12px;padding:16px 16px 14px;margin-bottom:14px">
+
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+              <span style="background:#0078D4;color:#fff;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:5px">RECOMMANDÉ</span>
+              <span style="font-size:13px;font-weight:700;color:#0D47A1">Accès via lien de partage OneDrive</span>
+            </div>
+
+            <!-- Instructions compactes -->
+            <div style="background:#fff;border-radius:8px;padding:11px 13px;margin-bottom:12px;font-size:12px;color:#3A3A3A;line-height:1.7">
+              <strong style="color:#0078D4">Admin (<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9effb0fdf6fff5f7ecdeedeaf1ebecedb0f3ff">[email&#160;protected]</a>) — 1 seule fois :</strong><br>
+              Sur <button onclick="window.open('https://onedrive.live.com','_blank')" style="background:none;border:none;color:#0078D4;font-weight:700;cursor:pointer;font-family:inherit;font-size:12px;padding:0;text-decoration:underline">OneDrive.com</button> → clic droit sur <strong>BDD MEDIA</strong> → <strong>Partager</strong> → <em>"Toute personne ayant le lien"</em> → <strong>Copier</strong><br>
+              <span style="color:#6B6B6B">Puis partagez ce lien avec tous vos collaborateurs via Teams ou email.</span>
+            </div>
+
+            <!-- Input lien -->
+            <div style="display:flex;gap:7px;margin-bottom:6px">
+              <input type="text" id="lib-share-url"
+                placeholder="Collez votre lien OneDrive ici…  https://1drv.ms/…"
+                style="flex:1;padding:11px 13px;border:2px solid #90CAF9;border-radius:8px;font-size:12.5px;font-family:inherit;color:#141414;background:#fff;min-width:0;transition:border-color .15s"
+                onfocus="this.style.borderColor='#0078D4'"
+                onblur="this.style.borderColor='#90CAF9'"
+                oninput="libShareUrlChanged(this.value)"
+                onkeydown="if(event.key==='Enter')libConnectShare()">
+              <button onclick="libConnectShare()" id="lib-share-btn"
+                style="background:#0078D4;color:#fff;border:none;border-radius:8px;padding:11px 20px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;box-shadow:0 3px 12px rgba(0,120,212,.3);transition:background .15s,transform .1s"
+                onmouseover="this.style.background='#006CBD';this.style.transform='translateY(-1px)'"
+                onmouseout="this.style.background='#0078D4';this.style.transform='none'">
+                ☁️ Connecter
+              </button>
+            </div>
+            <div id="lib-share-status" style="font-size:11.5px;color:#6B6B6B;min-height:18px;padding-left:2px"></div>
+
+            <!-- Saved link -->
+            <div id="lib-saved-link-row" style="display:none;margin-top:9px;background:rgba(16,124,16,.09);border-radius:7px;padding:8px 11px;display:flex;align-items:center;gap:8px;font-size:12px;color:#107C10">
+              <span>✅</span>
+              <span id="lib-saved-link-info" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Lien mémorisé</span>
+              <button onclick="libUseSavedLink()" style="background:#107C10;color:#fff;border:none;border-radius:5px;padding:4px 11px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap">Utiliser →</button>
+              <button onclick="libClearSavedLink()" style="background:none;border:1px solid #ccc;border-radius:5px;padding:4px 7px;font-size:10px;cursor:pointer;font-family:inherit;color:#999" title="Supprimer">✕</button>
+            </div>
+          </div>
+
+          <!-- ══ SIGN IN MS (option secondaire) ══ -->
+          <div style="background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;margin-bottom:12px">
+            <div style="font-size:11.5px;color:var(--mid);margin-bottom:10px;line-height:1.5">
+              <strong style="color:#141414">Connexion directe Office 365</strong> — chaque collaborateur peut se connecter avec son propre compte @stours.ma :<br>
+              <span style="font-size:10.5px"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c8a9e6aba0a9a3a1ba88bbbca7bdbabbe6a5a9">[email&#160;protected]</a>, <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a1c2cecdcdc0c3ced3c0d5c4d4d390e1d2d5ced4d3d28fccc0">[email&#160;protected]</a>, etc. — nécessite une App Azure AD (voir guide)</span>
+            </div>
+            <button onclick="msSignIn()"
+              style="display:inline-flex;align-items:center;border:none;border-radius:3px;cursor:pointer;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.17);font-family:'Segoe UI',Arial,sans-serif;max-width:280px;width:100%;transition:box-shadow .15s,transform .1s"
+              onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 5px 16px rgba(0,0,0,.26)'"
+              onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 10px rgba(0,0,0,.17)'">
+              <div style="background:#2F2F2F;width:42px;height:42px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                <svg width="21" height="21" viewBox="0 0 21 21"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
+              </div>
+              <div style="background:#2F2F2F;color:#fff;padding:0 16px;height:42px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;flex:1;border-left:1px solid rgba(255,255,255,.12)">
+                <span style="font-size:13px;font-weight:700">Sign in with Microsoft</span>
+                <span style="font-size:10px;color:rgba(255,255,255,.55);margin-top:1px">@stours.ma · Office 365</span>
+              </div>
+            </button>
+          </div>
+
+          <!-- ══ DÉMO ══ -->
+          <div style="text-align:center">
+            <button onclick="libDemoMode()" style="background:none;border:1px dashed var(--line);border-radius:7px;padding:7px 18px;font-size:12px;color:var(--mid);cursor:pointer;font-family:inherit;transition:border-color .15s" onmouseover="this.style.borderColor='var(--r)'" onmouseout="this.style.borderColor='var(--line)'">
+              🎯 Mode démo — aperçu avec photos exemples
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ BROWSER STATE ═══ -->
+      <div id="lib-browser-panel" style="display:none;padding:16px">
+
+        <!-- User + breadcrumb row -->
+        <div class="lib-browser-head">
+          <div class="lib-user-badge">
+            <div class="lib-user-avatar" id="lib-avatar">J</div>
+            <span id="lib-username"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="513b7f383a233e24223e242222381122253e2423227f3c30">[email&#160;protected]</a></span>
+          </div>
+          <div class="lib-path-row" id="lib-breadcrumb">
+            <span class="lib-crumb" onclick="libNavRoot()">☁️ BDD MEDIA</span>
+          </div>
+          <button class="lib-signout" onclick="libSignOut()">Déconnexion</button>
+        </div>
+
+        <!-- Toolbar + SEARCH -->
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px">
+          <!-- Search bar — grande et visible -->
+          <div style="position:relative">
+            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none">🔍</span>
+            <input type="text" id="lib-search-inp"
+              placeholder="Rechercher une photo, un lieu, un nom de fichier…"
+              style="width:100%;padding:11px 13px 11px 38px;border:2px solid var(--line);border-radius:10px;font-size:13.5px;font-family:inherit;color:var(--drk);background:#fff;transition:border-color .15s;box-shadow:0 1px 6px rgba(0,0,0,.05)"
+              onfocus="this.style.borderColor='var(--r)';this.style.boxShadow='0 0 0 3px rgba(168,55,29,.1)'"
+              onblur="this.style.borderColor='var(--line)';this.style.boxShadow='0 1px 6px rgba(0,0,0,.05)'"
+              oninput="libSearch(this.value)">
+            <button id="lib-search-clear" onclick="document.getElementById('lib-search-inp').value='';libSearch('');this.style.display='none'"
+              style="display:none;position:absolute;right:10px;top:50%;transform:translateY(-50%);background:var(--line);border:none;border-radius:50%;width:20px;height:20px;font-size:11px;cursor:pointer;color:var(--mid);line-height:1">✕</button>
+          </div>
+          <!-- Second row: view toggle + refresh + breadcrumb -->
+          <div class="lib-toolbar" style="margin-bottom:0">
+            <button class="lib-view-btn active" id="lib-btn-grid" onclick="libSetView('grid')" title="Grille">⊞</button>
+            <button class="lib-view-btn" id="lib-btn-list" onclick="libSetView('list')" title="Liste">☰</button>
+            <button class="btn btn-sec" style="padding:7px 12px;font-size:12px" onclick="libRefresh()">↻</button>
+            <div id="lib-search-count" style="font-size:11.5px;color:var(--mid);margin-left:4px;align-self:center"></div>
+          </div>
+        </div>
+
+        <!-- Content area -->
+        <div id="lib-content">
+          <div class="lib-loading"><div class="lib-spinner"></div>Chargement de BDD MEDIA…</div>
+        </div>
+
+        <!-- Action bar (visible when photo selected) -->
+        <div class="lib-action-bar" id="lib-action-bar" style="display:none">
+          <div class="lib-sel-count">Photo sélectionnée : <strong id="lib-sel-name">—</strong></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-sec" style="font-size:12px;padding:8px 14px" onclick="libInsertPhoto('cover')">🖼️ → Couverture</button>
+            <button class="btn btn-sec" style="font-size:12px;padding:8px 14px" onclick="libInsertPhoto('map')">🗺️ → Carte</button>
+            <button class="btn btn-r" style="font-size:12px;padding:8px 16px" onclick="libInsertPhotoToCurrentDay()">📅 → Jour actif</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════ TAB 0 – GÉNÉRAL ══════ -->
+  <div class="tab-panel active" id="tp0">
+    <div class="card">
+      <div class="card-title">📋 <span data-i="sec_info">Informations du circuit</span></div>
+      <div class="fr">
+        <div class="fg"><label data-i="lbl_nom">Nom du circuit *</label>
+          <input type="text" id="nom_circuit" data-i-ph="ph_nom"></div>
+        <div class="fg"><label data-i="lbl_dest">Destination</label>
+          <input type="text" id="destination" value="MAROC"></div>
+      </div>
+      <div class="fr fr1">
+        <div class="fg"><label data-i="lbl_sub">Sous-titre</label>
+          <input type="text" id="sous_titre" data-i-ph="ph_sub"></div>
+      </div>
+      <div class="fr fr3">
+        <div class="fg"><label data-i="lbl_dur">Durée *</label>
+          <input type="text" id="duree" data-i-ph="ph_dur"></div>
+        <div class="fg"><label data-i="lbl_grp">Taille du groupe</label>
+          <input type="text" id="taille_groupe" data-i-ph="ph_grp"></div>
+        <div class="fg"><label data-i="lbl_sai">Saison</label>
+          <input type="text" id="saison" data-i-ph="ph_sai"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🖼️ <span data-i="sec_imgs">Photos principales</span></div>
+      <div class="fr">
+        <div class="fg">
+          <label data-i="lbl_cover">Photo de couverture</label>
+          <div class="img-upload-zone" id="zone_cover" onclick="triggerFile('file_cover')">
+            <img class="img-thumb" id="thumb_cover">
+            <div class="img-info">
+              <div class="img-name" id="name_cover" data-i="ph_img">Cliquez pour insérer une image</div>
+              <div class="img-hint">JPG, PNG – recommandé 1920×1080</div>
+            </div>
+            <button class="img-btn" data-i="btn_insert">Insérer</button>
+            <button class="od-btn" onclick="event.stopPropagation();odOpen({type:'global',key:'cover'})" title="OneDrive BDD MEDIA">☁️ OneDrive</button>
+            <button class="img-clear" id="clear_cover" style="display:none" onclick="clearImg(event,'cover')">✕</button>
+          </div>
+          <input type="file" id="file_cover" accept="image/*" style="display:none" onchange="loadImg(this,'cover')">
+        </div>
+        <div class="fg">
+          <label data-i="lbl_map">Carte / Image aperçu</label>
+          <div class="img-upload-zone" id="zone_map" onclick="triggerFile('file_map')">
+            <img class="img-thumb" id="thumb_map">
+            <div class="img-info">
+              <div class="img-name" id="name_map" data-i="ph_img">Cliquez pour insérer une image</div>
+              <div class="img-hint">JPG, PNG – recommandé 800×600</div>
+            </div>
+            <button class="img-btn" data-i="btn_insert">Insérer</button>
+            <button class="od-btn" onclick="event.stopPropagation();odOpen({type:'global',key:'map'})" title="OneDrive BDD MEDIA">☁️ OneDrive</button>
+            <button class="img-clear" id="clear_map" style="display:none" onclick="clearImg(event,'map')">✕</button>
+          </div>
+          <input type="file" id="file_map" accept="image/*" style="display:none" onchange="loadImg(this,'map')">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🏙️ <span data-i="sec_villes">Villes du circuit</span></div>
+      <div class="fg">
+        <label data-i="lbl_tag_enter">Tapez et appuyez sur Entrée</label>
+        <div class="tags-wrap" id="tags_villes" onclick="document.getElementById('inp_villes').focus()">
+          <input type="text" id="inp_villes" class="tag-inp" data-i-ph="ph_villes">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">⭐ <span data-i="sec_pts">Points forts</span></div>
+      <div class="fg">
+        <label data-i="lbl_tag_enter">Tapez et appuyez sur Entrée</label>
+        <div class="tags-wrap" id="tags_pts" onclick="document.getElementById('inp_pts').focus()">
+          <input type="text" id="inp_pts" class="tag-inp" data-i-ph="ph_pts">
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-row" style="justify-content:flex-end">
+      <button class="btn btn-sec" onclick="loadExample()" data-i="btn_example">💡 Charger un exemple</button>
+      <button class="btn btn-r" onclick="switchTab(1)"><span data-i="tab1">Programme</span> →</button>
+    </div>
+  </div>
+
+  <!-- ══════ TAB 1 – PROGRAMME ══════ -->
+  <div class="tab-panel" id="tp1">
+    <div class="card">
+      <div class="card-title">🗓️ <span data-i="sec_prog">Programme jour par jour</span></div>
+      <div id="days-container"></div>
+      <button class="btn btn-add" onclick="addDay()" id="btn_add_day">＋ <span data-i="btn_addday">Ajouter un jour</span></button>
+    </div>
+    <div class="nav-row">
+      <button class="btn btn-sec" onclick="switchTab(0)">← <span data-i="tab0">Général</span></button>
+      <button class="btn btn-r" onclick="switchTab(2)"><span data-i="tab2">Services</span> →</button>
+    </div>
+  </div>
+
+  <!-- ══════ TAB 2 – SERVICES ══════ -->
+  <div class="tab-panel" id="tp2">
+    <div class="card">
+      <div class="card-title" style="color:var(--grn)">✅ <span data-i="sec_incl">Inclus dans le circuit</span></div>
+      <div class="fg">
+        <label data-i="lbl_tag_enter">Tapez et appuyez sur Entrée</label>
+        <div class="tags-wrap" id="tags_incl" onclick="document.getElementById('inp_incl').focus()">
+          <input type="text" id="inp_incl" class="tag-inp" data-i-ph="ph_incl">
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">❌ <span data-i="sec_excl">Non inclus</span></div>
+      <div class="fg">
+        <label data-i="lbl_tag_enter">Tapez et appuyez sur Entrée</label>
+        <div class="tags-wrap" id="tags_excl" onclick="document.getElementById('inp_excl').focus()">
+          <input type="text" id="inp_excl" class="tag-inp" data-i-ph="ph_excl">
+        </div>
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="btn btn-sec" onclick="switchTab(1)">← <span data-i="tab1">Programme</span></button>
+      <button class="btn btn-r" onclick="switchTab(3)"><span data-i="tab3">Générer</span> →</button>
+    </div>
+  </div>
+
+  <!-- ══════ TAB 3 – GÉNÉRER ══════ -->
+  <div class="tab-panel" id="tp3">
+    <div class="card">
+      <div class="gen-hero">
+        <div style="font-size:48px;margin-bottom:12px">🗂️</div>
+        <h2 data-i="gen_title">Votre présentation est prête !</h2>
+        <p data-i="gen_desc">Vérifiez le résumé ci-dessous puis cliquez sur <strong>Exporter PPT</strong> — votre fichier sera généré et téléchargé directement.</p>
+      </div>
+      <div class="summary-grid" id="summary-grid"></div>
+      <div class="progress-wrap" id="prog-wrap" style="display:none">
+        <div class="progress-label"><span data-i="gen_progress">Génération en cours…</span><span id="prog-pct">0%</span></div>
+        <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="btn btn-sec" onclick="switchTab(2)">← <span data-i="tab2">Services</span></button>
+    </div>
+  </div>
+
+</div>
+
+<!-- EXPORT BAR -->
+<div class="export-bar">
+  <div class="ex-info" data-i="bar_info">Remplissez les informations puis exportez votre <strong>présentation S'TOURS</strong></div>
+  <div class="export-btns">
+    <button class="btn-save" onclick="saveToLibrary()" title="Sauvegarder dans la bibliothèque">💾 <span data-i="btn_save">Sauvegarder</span></button>
+    <button class="btn-pdf" onclick="exportPDF()" data-i="btn_pdf">🖨️ PDF</button>
+    <button class="btn-ppt" id="btn-export" onclick="exportPPT()">
+      <span>⬇️</span> <span data-i="btn_ppt">Exporter PPT</span>
+    </button>
+  </div>
+</div>
+
+<!-- NOTIF -->
+<div class="notif" id="notif"></div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ══════════════════════════════════════════════════════════════════
+// TRANSLATIONS
+// ══════════════════════════════════════════════════════════════════
+const T = {
+  fr:{
+    tab_lib:'Bibliothèque',lib_title:'Bibliothèque de circuits S\'TOURS',lib_import_btn:'Importer JSON ou Excel',lib_import_hint:'Glissez ou cliquez — .json ou .xlsx',btn_save:'Sauvegarder',lib_builtin:'Modèle S\'TOURS',lib_custom:'Mon circuit',lib_saved:'✅ Circuit sauvegardé dans la bibliothèque !',lib_loaded:'✅ Circuit chargé — modifiez et exportez !',lib_deleted:'🗑 Circuit supprimé',lib_import_ok:'✅ Circuits importés avec succès !',lib_export_ok:'✅ Bibliothèque exportée !',
+    tab0:'Général',tab1:'Programme',tab2:'Services',tab3:'Générer',
+    sec_info:'Informations du circuit',sec_imgs:'Photos principales',sec_villes:'Villes du circuit',
+    sec_pts:'Points forts',sec_prog:'Programme jour par jour',sec_incl:'Inclus dans le circuit',sec_excl:'Non inclus',
+    lbl_nom:'Nom du circuit *',lbl_dest:'Destination',lbl_sub:'Sous-titre',
+    lbl_dur:'Durée *',lbl_grp:'Taille du groupe',lbl_sai:'Saison',
+    lbl_cover:'Photo de couverture',lbl_map:'Carte / Image aperçu',
+    lbl_tag_enter:'Tapez et appuyez sur Entrée',
+    ph_nom:'ex : Les Trésors du Maroc Impérial',ph_sub:'ex : Casablanca · Fès · Marrakech',
+    ph_dur:'ex : 10 Jours / 9 Nuits',ph_grp:'ex : Max 16 personnes',ph_sai:"ex : Toute l'année",
+    ph_villes:'Ex : Casablanca → Entrée, Fès → Entrée…',ph_pts:'Ex : Guide expert francophone → Entrée…',
+    ph_incl:'Ex : Transport climatisé → Entrée…',ph_excl:'Ex : Vols internationaux → Entrée…',
+    ph_img:'Cliquez pour insérer une image',
+    btn_insert:'Insérer',btn_example:'💡 Charger un exemple',btn_addday:'Ajouter un jour',btn_del:'Supprimer',
+    btn_ppt:'Exporter PPT',btn_pdf:'PDF',
+    lbl_titre:'Titre *',lbl_subtitle:'Sous-titre',lbl_desc:'Description *',lbl_acts:'Activités',
+    lbl_hotel:'Hébergement',lbl_ville:'Ville (badge)',lbl_travel:'Temps de trajet',lbl_img1:'Photo principale',lbl_img2:'2ème photo (optionnel)',
+    gen_title:'Votre présentation est prête !',
+    gen_desc:'Vérifiez le résumé ci-dessous puis cliquez sur <strong>Exporter PPT</strong> — votre fichier sera généré et téléchargé directement.',
+    gen_progress:'Génération en cours…',
+    bar_info:'Remplissez les informations puis exportez votre <strong>présentation S\'TOURS</strong>',
+    si_circuit:'Circuit',si_duree:'Durée',si_dest:'Destination',si_jours:'Jours',si_incl:'Inclus',si_slides:'Slides',
+    err_nom:'⚠️ Veuillez renseigner le nom du circuit',err_dur:'⚠️ Veuillez renseigner la durée',err_prog:'⚠️ Ajoutez au moins un jour de programme',
+    ok_done:'✅ Présentation générée avec succès !',
+    ppt_apercu:'APERÇU DU CIRCUIT',ppt_pts:'POINTS FORTS',ppt_jour:'JOUR',ppt_programme:'PROGRAMME',
+    ppt_incl:'INCLUS',ppt_excl:'NON INCLUS',ppt_incl_h:'✅  CE QUI EST INCLUS',ppt_excl_h:'❌  NON INCLUS',
+    ppt_contact:'PRÊT POUR L\'AVENTURE ?',ppt_cta:'Contactez notre équipe pour un devis personnalisé',
+    ppt_since:'Creating Connections Since 1983',ppt_hotel:'Hébergement',ppt_inclus_label:'Inclus :',
+    pdf_note:'Imprimez cette page en PDF (Ctrl+P → Enregistrer en PDF)',
+  },
+  en:{
+    tab_lib:'Library',lib_title:'S\'TOURS Circuit Library',lib_import_btn:'Import JSON or Excel',lib_import_hint:'Drag or click — .json or .xlsx',btn_save:'Save',lib_builtin:'S\'TOURS Template',lib_custom:'My Circuit',lib_saved:'✅ Circuit saved to library!',lib_loaded:'✅ Circuit loaded — edit and export!',lib_deleted:'🗑 Circuit deleted',lib_import_ok:'✅ Circuits imported successfully!',lib_export_ok:'✅ Library exported!',
+    tab0:'General',tab1:'Itinerary',tab2:'Services',tab3:'Generate',
+    sec_info:'Circuit information',sec_imgs:'Main photos',sec_villes:'Cities',
+    sec_pts:'Highlights',sec_prog:'Day by day program',sec_incl:'Included',sec_excl:'Not included',
+    lbl_nom:'Circuit name *',lbl_dest:'Destination',lbl_sub:'Subtitle',
+    lbl_dur:'Duration *',lbl_grp:'Group size',lbl_sai:'Season',
+    lbl_cover:'Cover photo',lbl_map:'Map / Overview image',
+    lbl_tag_enter:'Type and press Enter',
+    ph_nom:'e.g. Imperial Morocco Treasures',ph_sub:'e.g. Casablanca · Fes · Marrakech',
+    ph_dur:'e.g. 10 Days / 9 Nights',ph_grp:'e.g. Max 16 people',ph_sai:'e.g. Year-round',
+    ph_villes:'E.g. Casablanca → Enter, Fes → Enter…',ph_pts:'E.g. Expert English-speaking guide → Enter…',
+    ph_incl:'E.g. Air-conditioned transport → Enter…',ph_excl:'E.g. International flights → Enter…',
+    ph_img:'Click to insert an image',
+    btn_insert:'Insert',btn_example:'💡 Load example',btn_addday:'Add a day',btn_del:'Delete',
+    btn_ppt:'Export PPT',btn_pdf:'PDF',
+    lbl_titre:'Title *',lbl_subtitle:'Subtitle',lbl_desc:'Description *',lbl_acts:'Activities',
+    lbl_hotel:'Accommodation',lbl_ville:'City (badge)',lbl_travel:'Travel time',lbl_img1:'Main photo',lbl_img2:'2nd photo (optional)',
+    gen_title:'Your presentation is ready!',
+    gen_desc:'Check the summary below then click <strong>Export PPT</strong> — your file will be generated and downloaded directly.',
+    gen_progress:'Generating…',
+    bar_info:'Fill in the information then export your <strong>S\'TOURS presentation</strong>',
+    si_circuit:'Circuit',si_duree:'Duration',si_dest:'Destination',si_jours:'Days',si_incl:'Included',si_slides:'Slides',
+    err_nom:'⚠️ Please enter the circuit name',err_dur:'⚠️ Please enter the duration',err_prog:'⚠️ Add at least one day to the program',
+    ok_done:'✅ Presentation successfully generated!',
+    ppt_apercu:'CIRCUIT OVERVIEW',ppt_pts:'HIGHLIGHTS',ppt_jour:'DAY',ppt_programme:'ITINERARY',
+    ppt_incl:'INCLUDED',ppt_excl:'NOT INCLUDED',ppt_incl_h:'✅  WHAT IS INCLUDED',ppt_excl_h:'❌  NOT INCLUDED',
+    ppt_contact:'READY FOR THE ADVENTURE?',ppt_cta:'Contact our team for a personalized quote',
+    ppt_since:'Creating Connections Since 1983',ppt_hotel:'Accommodation',ppt_inclus_label:'Included:',
+    pdf_note:'Print this page as PDF (Ctrl+P → Save as PDF)',
+  },
+  it:{
+    tab_lib:'Libreria',lib_title:'Libreria Circuiti S\'TOURS',lib_import_btn:'Importa JSON o Excel',lib_import_hint:'Trascina o clicca — .json o .xlsx',btn_save:'Salva',lib_builtin:'Modello S\'TOURS',lib_custom:'Il Mio Circuito',lib_saved:'✅ Circuito salvato nella libreria!',lib_loaded:'✅ Circuito caricato — modifica ed esporta!',lib_deleted:'🗑 Circuito eliminato',lib_import_ok:'✅ Circuiti importati con successo!',lib_export_ok:'✅ Libreria esportata!',
+    tab0:'Generale',tab1:'Programma',tab2:'Servizi',tab3:'Genera',
+    sec_info:'Informazioni del circuito',sec_imgs:'Foto principali',sec_villes:'Città',
+    sec_pts:'Punti salienti',sec_prog:'Programma giorno per giorno',sec_incl:'Incluso',sec_excl:'Non incluso',
+    lbl_nom:'Nome del circuito *',lbl_dest:'Destinazione',lbl_sub:'Sottotitolo',
+    lbl_dur:'Durata *',lbl_grp:'Dimensione del gruppo',lbl_sai:'Stagione',
+    lbl_cover:'Foto di copertina',lbl_map:'Mappa / Immagine',
+    lbl_tag_enter:'Digita e premi Invio',
+    ph_nom:'es. I Tesori del Marocco Imperiale',ph_sub:'es. Casablanca · Fez · Marrakech',
+    ph_dur:'es. 10 Giorni / 9 Notti',ph_grp:'es. Max 16 persone',ph_sai:'es. Tutto l\'anno',
+    ph_villes:'Es. Casablanca → Invio, Fez → Invio…',ph_pts:'Es. Guida esperta in italiano → Invio…',
+    ph_incl:'Es. Trasporto climatizzato → Invio…',ph_excl:'Es. Voli internazionali → Invio…',
+    ph_img:'Clicca per inserire un\'immagine',
+    btn_insert:'Inserisci',btn_example:'💡 Carica esempio',btn_addday:'Aggiungi un giorno',btn_del:'Elimina',
+    btn_ppt:'Esporta PPT',btn_pdf:'PDF',
+    lbl_titre:'Titolo *',lbl_subtitle:'Sottotitolo',lbl_desc:'Descrizione *',lbl_acts:'Attività',
+    lbl_hotel:'Alloggio',lbl_ville:'Città (badge)',lbl_travel:'Tempo di viaggio',lbl_img1:'Foto principale',lbl_img2:'2a foto (opzionale)',
+    gen_title:'La tua presentazione è pronta!',
+    gen_desc:'Controlla il riepilogo qui sotto poi clicca <strong>Esporta PPT</strong>.',
+    gen_progress:'Generazione in corso…',
+    bar_info:'Compila le informazioni poi esporta la tua <strong>presentazione S\'TOURS</strong>',
+    si_circuit:'Circuito',si_duree:'Durata',si_dest:'Destinazione',si_jours:'Giorni',si_incl:'Inclusi',si_slides:'Slide',
+    err_nom:'⚠️ Inserisci il nome del circuito',err_dur:'⚠️ Inserisci la durata',err_prog:'⚠️ Aggiungi almeno un giorno',
+    ok_done:'✅ Presentazione generata con successo!',
+    ppt_apercu:'PANORAMICA DEL CIRCUITO',ppt_pts:'PUNTI SALIENTI',ppt_jour:'GIORNO',ppt_programme:'PROGRAMMA',
+    ppt_incl:'INCLUSO',ppt_excl:'NON INCLUSO',ppt_incl_h:'✅  COSA È INCLUSO',ppt_excl_h:'❌  NON INCLUSO',
+    ppt_contact:'PRONTI PER L\'AVVENTURA?',ppt_cta:'Contattate il nostro team per un preventivo personalizzato',
+    ppt_since:'Creating Connections Since 1983',ppt_hotel:'Alloggio',ppt_inclus_label:'Incluso:',
+    pdf_note:'Stampa questa pagina in PDF (Ctrl+P → Salva come PDF)',
+  },
+  de:{
+    tab_lib:'Bibliothek',lib_title:'S\'TOURS Reisebibliothek',lib_import_btn:'JSON oder Excel importieren',lib_import_hint:'Ziehen oder klicken — .json oder .xlsx',btn_save:'Speichern',lib_builtin:'S\'TOURS Vorlage',lib_custom:'Meine Reise',lib_saved:'✅ Reise in der Bibliothek gespeichert!',lib_loaded:'✅ Reise geladen — bearbeiten und exportieren!',lib_deleted:'🗑 Reise gelöscht',lib_import_ok:'✅ Reisen erfolgreich importiert!',lib_export_ok:'✅ Bibliothek exportiert!',
+    tab0:'Allgemein',tab1:'Programm',tab2:'Leistungen',tab3:'Erstellen',
+    sec_info:'Reiseinformationen',sec_imgs:'Hauptfotos',sec_villes:'Städte',
+    sec_pts:'Highlights',sec_prog:'Tagesprogramm',sec_incl:'Inbegriffen',sec_excl:'Nicht inbegriffen',
+    lbl_nom:'Name der Reise *',lbl_dest:'Zielort',lbl_sub:'Untertitel',
+    lbl_dur:'Dauer *',lbl_grp:'Gruppengröße',lbl_sai:'Saison',
+    lbl_cover:'Titelbild',lbl_map:'Karte / Überblicksbild',
+    lbl_tag_enter:'Tippen und Enter drücken',
+    ph_nom:'z.B. Die kaiserlichen Schätze Marokkos',ph_sub:'z.B. Casablanca · Fes · Marrakesch',
+    ph_dur:'z.B. 10 Tage / 9 Nächte',ph_grp:'z.B. Max. 16 Personen',ph_sai:'z.B. Ganzjährig',
+    ph_villes:'z.B. Casablanca → Enter, Fes → Enter…',ph_pts:'z.B. Deutschsprachiger Reiseleiter → Enter…',
+    ph_incl:'z.B. Klimatisierter Transport → Enter…',ph_excl:'z.B. Internationale Flüge → Enter…',
+    ph_img:'Klicken Sie, um ein Bild einzufügen',
+    btn_insert:'Einfügen',btn_example:'💡 Beispiel laden',btn_addday:'Tag hinzufügen',btn_del:'Löschen',
+    btn_ppt:'PPT exportieren',btn_pdf:'PDF',
+    lbl_titre:'Titel *',lbl_subtitle:'Untertitel',lbl_desc:'Beschreibung *',lbl_acts:'Aktivitäten',
+    lbl_hotel:'Unterkunft',lbl_ville:'Stadt (Badge)',lbl_travel:'Reisezeit',lbl_img1:'Hauptfoto',lbl_img2:'2. Foto (optional)',
+    gen_title:'Ihre Präsentation ist bereit!',
+    gen_desc:'Überprüfen Sie die Zusammenfassung und klicken Sie dann auf <strong>PPT exportieren</strong>.',
+    gen_progress:'Wird erstellt…',
+    bar_info:'Füllen Sie die Informationen aus und exportieren Sie Ihre <strong>S\'TOURS Präsentation</strong>',
+    si_circuit:'Reise',si_duree:'Dauer',si_dest:'Zielort',si_jours:'Tage',si_incl:'Inkl.',si_slides:'Folien',
+    err_nom:'⚠️ Bitte geben Sie den Namen der Reise ein',err_dur:'⚠️ Bitte geben Sie die Dauer ein',err_prog:'⚠️ Fügen Sie mindestens einen Tag hinzu',
+    ok_done:'✅ Präsentation erfolgreich erstellt!',
+    ppt_apercu:'REISEÜBERSICHT',ppt_pts:'HIGHLIGHTS',ppt_jour:'TAG',ppt_programme:'PROGRAMM',
+    ppt_incl:'INBEGRIFFEN',ppt_excl:'NICHT INBEGRIFFEN',ppt_incl_h:'✅  WAS INBEGRIFFEN IST',ppt_excl_h:'❌  NICHT INBEGRIFFEN',
+    ppt_contact:'BEREIT FÜR DAS ABENTEUER?',ppt_cta:'Kontaktieren Sie unser Team für ein persönliches Angebot',
+    ppt_since:'Creating Connections Since 1983',ppt_hotel:'Unterkunft',ppt_inclus_label:'Inbegriffen:',
+    pdf_note:'Drucken Sie diese Seite als PDF (Strg+P → Als PDF speichern)',
+  },
+  zh:{
+    tab_lib:'线路库',lib_title:'S\'TOURS线路数据库',lib_import_btn:'导入JSON或Excel',lib_import_hint:'拖拽或点击 — .json或.xlsx',btn_save:'保存',lib_builtin:'S\'TOURS模板',lib_custom:'我的线路',lib_saved:'✅ 线路已保存到数据库！',lib_loaded:'✅ 线路已加载 — 编辑并导出！',lib_deleted:'🗑 线路已删除',lib_import_ok:'✅ 线路导入成功！',lib_export_ok:'✅ 数据库已导出！',
+    tab0:'基本信息',tab1:'行程',tab2:'服务',tab3:'生成',
+    sec_info:'线路信息',sec_imgs:'主要图片',sec_villes:'城市',
+    sec_pts:'亮点',sec_prog:'每日行程',sec_incl:'包含项目',sec_excl:'不包含项目',
+    lbl_nom:'线路名称 *',lbl_dest:'目的地',lbl_sub:'副标题',
+    lbl_dur:'行程天数 *',lbl_grp:'团队规模',lbl_sai:'适合季节',
+    lbl_cover:'封面图片',lbl_map:'地图 / 概览图',
+    lbl_tag_enter:'输入后按回车键',
+    ph_nom:'例：摩洛哥帝王之旅',ph_sub:'例：卡萨布兰卡 · 非斯 · 马拉喀什',
+    ph_dur:'例：10天9晚',ph_grp:'例：最多16人',ph_sai:'例：全年',
+    ph_villes:'例：卡萨布兰卡 → 回车，非斯 → 回车…',ph_pts:'例：中文导游 → 回车…',
+    ph_incl:'例：空调车接送 → 回车…',ph_excl:'例：国际机票 → 回车…',
+    ph_img:'点击插入图片',
+    btn_insert:'插入',btn_example:'💡 加载示例',btn_addday:'添加一天',btn_del:'删除',
+    btn_ppt:'导出PPT',btn_pdf:'PDF',
+    lbl_titre:'标题 *',lbl_subtitle:'副标题',lbl_desc:'描述 *',lbl_acts:'活动',
+    lbl_hotel:'住宿',lbl_ville:'城市（标签）',lbl_travel:'行程时间',lbl_img1:'主要图片',lbl_img2:'第二张图片（可选）',
+    gen_title:'您的演示文稿已准备好！',
+    gen_desc:'请查看下方摘要，然后点击<strong>导出PPT</strong>——文件将直接生成并下载。',
+    gen_progress:'生成中…',
+    bar_info:'填写信息后导出您的 <strong>S\'TOURS演示文稿</strong>',
+    si_circuit:'线路',si_duree:'天数',si_dest:'目的地',si_jours:'天',si_incl:'包含',si_slides:'幻灯片',
+    err_nom:'⚠️ 请输入线路名称',err_dur:'⚠️ 请输入行程天数',err_prog:'⚠️ 请至少添加一天行程',
+    ok_done:'✅ 演示文稿生成成功！',
+    ppt_apercu:'线路概览',ppt_pts:'行程亮点',ppt_jour:'第',ppt_programme:'行程安排',
+    ppt_incl:'包含',ppt_excl:'不包含',ppt_incl_h:'✅  包含项目',ppt_excl_h:'❌  不包含项目',
+    ppt_contact:'准备好出发了吗？',ppt_cta:'联系我们的团队获取个性化报价',
+    ppt_since:'Creating Connections Since 1983',ppt_hotel:'住宿',ppt_inclus_label:'包含：',
+    pdf_note:'打印此页为PDF（Ctrl+P → 另存为PDF）',
+  },
+  pt:{
+    tab_lib:'Biblioteca',lib_title:'Biblioteca de Circuitos S\'TOURS',lib_import_btn:'Importar JSON ou Excel',lib_import_hint:'Arraste ou clique — .json ou .xlsx',btn_save:'Guardar',lib_builtin:'Modelo S\'TOURS',lib_custom:'O Meu Circuito',lib_saved:'✅ Circuito guardado na biblioteca!',lib_loaded:'✅ Circuito carregado — edite e exporte!',lib_deleted:'🗑 Circuito eliminado',lib_import_ok:'✅ Circuitos importados com sucesso!',lib_export_ok:'✅ Biblioteca exportada!',
+    tab0:'Geral',tab1:'Programa',tab2:'Serviços',tab3:'Gerar',
+    sec_info:'Informações do circuito',sec_imgs:'Fotos principais',sec_villes:'Cidades',
+    sec_pts:'Destaques',sec_prog:'Programa dia a dia',sec_incl:'Incluído',sec_excl:'Não incluído',
+    lbl_nom:'Nome do circuito *',lbl_dest:'Destino',lbl_sub:'Subtítulo',
+    lbl_dur:'Duração *',lbl_grp:'Tamanho do grupo',lbl_sai:'Temporada',
+    lbl_cover:'Foto de capa',lbl_map:'Mapa / Imagem',
+    lbl_tag_enter:'Digite e pressione Enter',
+    ph_nom:'ex. Os Tesouros do Marrocos Imperial',ph_sub:'ex. Casablanca · Fez · Marraquexe',
+    ph_dur:'ex. 10 Dias / 9 Noites',ph_grp:'ex. Máx. 16 pessoas',ph_sai:'ex. Todo o ano',
+    ph_villes:'Ex. Casablanca → Enter, Fez → Enter…',ph_pts:'Ex. Guia especializado em português → Enter…',
+    ph_incl:'Ex. Transporte climatizado → Enter…',ph_excl:'Ex. Voos internacionais → Enter…',
+    ph_img:'Clique para inserir uma imagem',
+    btn_insert:'Inserir',btn_example:'💡 Carregar exemplo',btn_addday:'Adicionar um dia',btn_del:'Excluir',
+    btn_ppt:'Exportar PPT',btn_pdf:'PDF',
+    lbl_titre:'Título *',lbl_subtitle:'Subtítulo',lbl_desc:'Descrição *',lbl_acts:'Atividades',
+    lbl_hotel:'Hospedagem',lbl_ville:'Cidade (badge)',lbl_travel:'Tempo de viagem',lbl_img1:'Foto principal',lbl_img2:'2ª foto (opcional)',
+    gen_title:'Sua apresentação está pronta!',
+    gen_desc:'Verifique o resumo abaixo e clique em <strong>Exportar PPT</strong>.',
+    gen_progress:'Gerando…',
+    bar_info:'Preencha as informações e exporte sua <strong>apresentação S\'TOURS</strong>',
+    si_circuit:'Circuito',si_duree:'Duração',si_dest:'Destino',si_jours:'Dias',si_incl:'Incluídos',si_slides:'Slides',
+    err_nom:'⚠️ Por favor, insira o nome do circuito',err_dur:'⚠️ Por favor, insira a duração',err_prog:'⚠️ Adicione pelo menos um dia ao programa',
+    ok_done:'✅ Apresentação gerada com sucesso!',
+    ppt_apercu:'VISÃO GERAL DO CIRCUITO',ppt_pts:'DESTAQUES',ppt_jour:'DIA',ppt_programme:'PROGRAMA',
+    ppt_incl:'INCLUÍDO',ppt_excl:'NÃO INCLUÍDO',ppt_incl_h:'✅  O QUE ESTÁ INCLUÍDO',ppt_excl_h:'❌  NÃO INCLUÍDO',
+    ppt_contact:'PRONTO PARA A AVENTURA?',ppt_cta:'Entre em contacto com a nossa equipa para um orçamento personalizado',
+    ppt_since:'Creating Connections Since 1983',ppt_hotel:'Hospedagem',ppt_inclus_label:'Incluído:',
+    pdf_note:'Imprima esta página como PDF (Ctrl+P → Guardar como PDF)',
+  },
+  es:{
+    tab_lib:'Biblioteca',lib_title:'Biblioteca de Circuitos S\'TOURS',lib_import_btn:'Importar JSON o Excel',lib_import_hint:'Arrastra o haz clic — .json o .xlsx',btn_save:'Guardar',lib_builtin:'Plantilla S\'TOURS',lib_custom:'Mi Circuito',lib_saved:'✅ ¡Circuito guardado en la biblioteca!',lib_loaded:'✅ ¡Circuito cargado — edita y exporta!',lib_deleted:'🗑 Circuito eliminado',lib_import_ok:'✅ ¡Circuitos importados con éxito!',lib_export_ok:'✅ ¡Biblioteca exportada!',
+    tab0:'General',tab1:'Programa',tab2:'Servicios',tab3:'Generar',
+    sec_info:'Información del circuito',sec_imgs:'Fotos principales',sec_villes:'Ciudades',
+    sec_pts:'Aspectos destacados',sec_prog:'Programa día a día',sec_incl:'Incluido',sec_excl:'No incluido',
+    lbl_nom:'Nombre del circuito *',lbl_dest:'Destino',lbl_sub:'Subtítulo',
+    lbl_dur:'Duración *',lbl_grp:'Tamaño del grupo',lbl_sai:'Temporada',
+    lbl_cover:'Foto de portada',lbl_map:'Mapa / Imagen',
+    lbl_tag_enter:'Escribe y pulsa Enter',
+    ph_nom:'ej. Los Tesoros del Marruecos Imperial',ph_sub:'ej. Casablanca · Fez · Marrakech',
+    ph_dur:'ej. 10 Días / 9 Noches',ph_grp:'ej. Máx. 16 personas',ph_sai:'ej. Todo el año',
+    ph_villes:'Ej. Casablanca → Enter, Fez → Enter…',ph_pts:'Ej. Guía experto en español → Enter…',
+    ph_incl:'Ej. Transporte climatizado → Enter…',ph_excl:'Ej. Vuelos internacionales → Enter…',
+    ph_img:'Haz clic para insertar una imagen',
+    btn_insert:'Insertar',btn_example:'💡 Cargar ejemplo',btn_addday:'Añadir un día',btn_del:'Eliminar',
+    btn_ppt:'Exportar PPT',btn_pdf:'PDF',
+    lbl_titre:'Título *',lbl_subtitle:'Subtítulo',lbl_desc:'Descripción *',lbl_acts:'Actividades',
+    lbl_hotel:'Alojamiento',lbl_ville:'Ciudad (badge)',lbl_travel:'Tiempo de viaje',lbl_img1:'Foto principal',lbl_img2:'2ª foto (opcional)',
+    gen_title:'¡Tu presentación está lista!',
+    gen_desc:'Revisa el resumen a continuación y haz clic en <strong>Exportar PPT</strong>.',
+    gen_progress:'Generando…',
+    bar_info:'Rellena la información y exporta tu <strong>presentación S\'TOURS</strong>',
+    si_circuit:'Circuito',si_duree:'Duración',si_dest:'Destino',si_jours:'Días',si_incl:'Incluidos',si_slides:'Diapositivas',
+    err_nom:'⚠️ Por favor, introduce el nombre del circuito',err_dur:'⚠️ Por favor, introduce la duración',err_prog:'⚠️ Añade al menos un día al programa',
+    ok_done:'✅ ¡Presentación generada con éxito!',
+    ppt_apercu:'RESUMEN DEL CIRCUITO',ppt_pts:'ASPECTOS DESTACADOS',ppt_jour:'DÍA',ppt_programme:'PROGRAMA',
+    ppt_incl:'INCLUIDO',ppt_excl:'NO INCLUIDO',ppt_incl_h:'✅  QUÉ ESTÁ INCLUIDO',ppt_excl_h:'❌  NO INCLUIDO',
+    ppt_contact:'¿LISTO PARA LA AVENTURA?',ppt_cta:'Contacte con nuestro equipo para un presupuesto personalizado',
+    ppt_since:'Creating Connections Since 1983',ppt_hotel:'Alojamiento',ppt_inclus_label:'Incluido:',
+    pdf_note:'Imprime esta página como PDF (Ctrl+P → Guardar como PDF)',
+  }
+};
+const LANG_FLAGS={'fr':'🇫🇷','en':'🇬🇧','it':'🇮🇹','de':'🇩🇪','zh':'🇨🇳','pt':'🇵🇹','es':'🇪🇸'};
+
+let lang='fr';
+function t(k){return T[lang][k]||T['fr'][k]||k;}
+
+function setLang(l){
+  lang=l;
+  document.getElementById('langFlag').textContent=LANG_FLAGS[l]||'🌐';
+  document.documentElement.lang=l;
+  applyTranslations();
+  renderDays();
+  if(currentTab===3)buildSummary();
+}
+
+function applyTranslations(){
+  document.querySelectorAll('[data-i]').forEach(el=>{
+    const k=el.getAttribute('data-i');
+    if(el.tagName==='INPUT'||el.tagName==='TEXTAREA') el.placeholder=t(k);
+    else el.innerHTML=t(k);
+  });
+  document.querySelectorAll('[data-i-ph]').forEach(el=>{
+    el.placeholder=t(el.getAttribute('data-i-ph'));
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════════════
+const S={
+  villes:[],pts:[],incl:[],excl:[],
+  imgs:{cover:null,map:null},
+  programme:[]
+};
+
+// ══════════════════════════════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════════════════════════════
+let currentTab=0;
+function switchTab(n){
+  // Map numeric to buttons (lib is index -1 logically, but first button)
+  const tabs=['lib',0,1,2,3];
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',tabs[i]===n));
+  // Map panels: tp-lib, tp0, tp1, tp2, tp3
+  const panels=['tp-lib','tp0','tp1','tp2','tp3'];
+  panels.forEach((id,i)=>{
+    const el=document.getElementById(id);
+    if(el)el.classList.toggle('active',tabs[i]===n);
+  });
+  currentTab=n;
+  if(n===3)buildSummary();
+  if(n==='lib')libInitIfLoggedIn();
+}
+
+// ══════════════════════════════════════════════════════════════════
+// IMAGE UPLOAD
+// ══════════════════════════════════════════════════════════════════
+const imgStore={};
+
+function triggerFile(id){document.getElementById(id).click();}
+
+function loadImg(input,key){
+  if(!input.files||!input.files[0])return;
+  const file=input.files[0];
+  const reader=new FileReader();
+  reader.onload=e=>{
+    imgStore[key]=e.target.result;
+    const thumb=document.getElementById('thumb_'+key);
+    const name=document.getElementById('name_'+key);
+    const zone=document.getElementById('zone_'+key);
+    const clr=document.getElementById('clear_'+key);
+    if(thumb){thumb.src=e.target.result;thumb.classList.add('show');}
+    if(name)name.textContent=file.name;
+    if(zone)zone.classList.add('has-image');
+    if(clr)clr.style.display='block';
+  };
+  reader.readAsDataURL(file);
+  input.value='';
+}
+
+function clearImg(e,key){
+  e.stopPropagation();
+  imgStore[key]=null;
+  const thumb=document.getElementById('thumb_'+key);
+  const name=document.getElementById('name_'+key);
+  const zone=document.getElementById('zone_'+key);
+  const clr=document.getElementById('clear_'+key);
+  if(thumb){thumb.src='';thumb.classList.remove('show');}
+  if(name)name.textContent=t('ph_img');
+  if(zone)zone.classList.remove('has-image');
+  if(clr)clr.style.display='none';
+}
+
+function loadDayImg(input,idx,slot){
+  if(!input.files||!input.files[0])return;
+  const file=input.files[0];
+  const reader=new FileReader();
+  reader.onload=e=>{
+    if(!S.programme[idx])return;
+    S.programme[idx][slot]=e.target.result;
+    const thumb=document.getElementById(`dthumb_${idx}_${slot}`);
+    const name=document.getElementById(`dname_${idx}_${slot}`);
+    const zone=document.getElementById(`dzone_${idx}_${slot}`);
+    const clr=document.getElementById(`dclr_${idx}_${slot}`);
+    if(thumb){thumb.src=e.target.result;thumb.classList.add('show');}
+    if(name)name.textContent=file.name;
+    if(zone)zone.classList.add('has-image');
+    if(clr)clr.style.display='block';
+  };
+  reader.readAsDataURL(file);
+  input.value='';
+}
+
+function clearDayImg(e,idx,slot){
+  e.stopPropagation();
+  if(S.programme[idx])S.programme[idx][slot]=null;
+  const thumb=document.getElementById(`dthumb_${idx}_${slot}`);
+  const name=document.getElementById(`dname_${idx}_${slot}`);
+  const zone=document.getElementById(`dzone_${idx}_${slot}`);
+  const clr=document.getElementById(`dclr_${idx}_${slot}`);
+  if(thumb){thumb.src='';thumb.classList.remove('show');}
+  if(name)name.textContent=t('ph_img');
+  if(zone)zone.classList.remove('has-image');
+  if(clr)clr.style.display='none';
+}
+
+// ══════════════════════════════════════════════════════════════════
+// TAGS
+// ══════════════════════════════════════════════════════════════════
+function initTag(inpId,wrapId,arr,color){
+  const inp=document.getElementById(inpId);
+  if(!inp)return;
+  inp.addEventListener('keydown',e=>{
+    if(e.key==='Enter'&&inp.value.trim()){
+      e.preventDefault();
+      const v=inp.value.trim();
+      if(!arr.includes(v)){arr.push(v);renderTags(wrapId,arr,inpId,color);}
+      inp.value='';
+    }
+    if(e.key==='Backspace'&&!inp.value&&arr.length){arr.pop();renderTags(wrapId,arr,inpId,color);}
+  });
+}
+function renderTags(wrapId,arr,inpId,color){
+  const w=document.getElementById(wrapId);if(!w)return;
+  const inp=document.getElementById(inpId);
+  w.querySelectorAll('.tag').forEach(t=>t.remove());
+  arr.forEach((v,i)=>{
+    const tg=document.createElement('span');
+    tg.className='tag'+(color==='grn'?' tag-grn':'');
+    tg.innerHTML=`${esc(v)}<button onclick="rmTag('${wrapId}','${inpId}',${i},'${color||''}')">×</button>`;
+    w.insertBefore(tg,inp);
+  });
+}
+function rmTag(wrapId,inpId,idx,color){
+  const arr=wrapId==='tags_villes'?S.villes:wrapId==='tags_pts'?S.pts:wrapId==='tags_incl'?S.incl:S.excl;
+  arr.splice(idx,1);renderTags(wrapId,arr,inpId,color);
+}
+initTag('inp_villes','tags_villes',S.villes,'');
+initTag('inp_pts','tags_pts',S.pts,'');
+initTag('inp_incl','tags_incl',S.incl,'grn');
+initTag('inp_excl','tags_excl',S.excl,'');
+
+// ══════════════════════════════════════════════════════════════════
+// DAYS
+// ══════════════════════════════════════════════════════════════════
+function addDay(data){
+  S.programme.push(data||{titre:'',sous_titre:'',description:'',activites:[],hebergement:'',ville:'',travel_time:'',img1:null,img2:null});
+  renderDays();
+  setTimeout(()=>{const c=document.querySelectorAll('.day-card');if(c.length)c[c.length-1].classList.add('open');},30);
+}
+function removeDay(i){S.programme.splice(i,1);renderDays();}
+function toggleDay(i){document.querySelectorAll('.day-card')[i].classList.toggle('open');}
+function updDay(i,f,v){S.programme[i][f]=v;if(f==='titre'){const p=document.getElementById('dp'+i);if(p)p.textContent=v||'(…)';}}
+function addAct(e,i){
+  if(e.key==='Enter'&&e.target.value.trim()){
+    e.preventDefault();const v=e.target.value.trim();
+    if(!S.programme[i].activites)S.programme[i].activites=[];
+    S.programme[i].activites.push(v);e.target.value='';
+    renderActTags(i);
+  }
+}
+function rmAct(di,ai){S.programme[di].activites.splice(ai,1);renderActTags(di);}
+function renderActTags(i){
+  const w=document.getElementById('atags'+i);const inp=document.getElementById('ainp'+i);
+  if(!w||!inp)return;
+  w.querySelectorAll('.tag').forEach(t=>t.remove());
+  (S.programme[i].activites||[]).forEach((a,ai)=>{
+    const tg=document.createElement('span');tg.className='tag';
+    tg.innerHTML=`${esc(a)}<button onclick="rmAct(${i},${ai})">×</button>`;
+    w.insertBefore(tg,inp);
+  });
+}
+
+function imgZoneHTML(idx,slot,data){
+  const hasImg=!!(data&&(data[slot]));
+  const src=hasImg?data[slot]:'';
+  const fname=hasImg?'Image chargée':'';
+  return `
+    <div class="img-upload-zone ${hasImg?'has-image':''}" id="dzone_${idx}_${slot}" onclick="document.getElementById('dfile_${idx}_${slot}').click()">
+      <img class="img-thumb ${hasImg?'show':''}" id="dthumb_${idx}_${slot}" src="${src}">
+      <div class="img-info">
+        <div class="img-name" id="dname_${idx}_${slot}">${hasImg?fname:t('ph_img')}</div>
+        <div class="img-hint">JPG, PNG</div>
+      </div>
+      <button class="img-btn" onclick="event.stopPropagation();document.getElementById('dfile_${idx}_${slot}').click()">${t('btn_insert')}</button>
+      <button class="od-btn" onclick="event.stopPropagation();odOpen({type:'day',idx:${idx},slot:'${slot}'})" title="BDD MEDIA OneDrive">☁️</button>
+      <button class="img-clear" id="dclr_${idx}_${slot}" style="display:${hasImg?'block':'none'}" onclick="clearDayImg(event,${idx},'${slot}')">✕</button>
+    </div>
+    <input type="file" id="dfile_${idx}_${slot}" accept="image/*" style="display:none" onchange="loadDayImg(this,${idx},'${slot}')">`;
+}
+
+function renderDays(){
+  const cont=document.getElementById('days-container');cont.innerHTML='';
+  S.programme.forEach((j,i)=>{
+    const d=document.createElement('div');
+    d.className='day-card'+(i===S.programme.length-1?' open':'');
+    const actTags=(j.activites||[]).map((a,ai)=>`<span class="tag">${esc(a)}<button onclick="rmAct(${i},${ai})">×</button></span>`).join('');
+    const dayLabel=lang==='zh'?`${t('ppt_jour')} ${i+1} 天`:`${t('ppt_jour')} ${i+1}`;
+    d.innerHTML=`
+      <div class="day-hdr" onclick="toggleDay(${i})">
+        <span class="day-badge">${dayLabel}</span>
+        <span class="day-prev" id="dp${i}">${esc(j.titre)||'(…)'}</span>
+        <span class="day-chevron">▼</span>
+      </div>
+      <div class="day-body">
+        <div class="fr">
+          <div class="fg"><label>${t('lbl_titre')}</label>
+            <input type="text" value="${esc(j.titre)}" placeholder="${t('ph_nom')}" oninput="updDay(${i},'titre',this.value)"></div>
+          <div class="fg"><label>${t('lbl_subtitle')}</label>
+            <input type="text" value="${esc(j.sous_titre)}" placeholder="${t('ph_sub')}" oninput="updDay(${i},'sous_titre',this.value)"></div>
+        </div>
+        <div class="fr fr1" style="margin-bottom:12px">
+          <div class="fg"><label>${t('lbl_desc')}</label>
+            <textarea oninput="updDay(${i},'description',this.value)">${esc(j.description)}</textarea></div>
+        </div>
+        <div class="fg" style="margin-bottom:12px">
+          <label>${t('lbl_acts')}</label>
+          <div class="tags-wrap" id="atags${i}" onclick="document.getElementById('ainp${i}').focus()">
+            ${actTags}
+            <input type="text" id="ainp${i}" class="tag-inp" placeholder="${t('ph_pts')}" onkeydown="addAct(event,${i})">
+          </div>
+        </div>
+        <div class="fr fr3" style="margin-bottom:12px">
+          <div class="fg"><label>${t('lbl_hotel')}</label>
+            <input type="text" value="${esc(j.hebergement)}" oninput="updDay(${i},'hebergement',this.value)"></div>
+          <div class="fg"><label>${t('lbl_ville')}</label>
+            <input type="text" value="${esc(j.ville)}" oninput="updDay(${i},'ville',this.value)"></div>
+          <div class="fg"><label>${t('lbl_travel')}</label>
+            <input type="text" value="${esc(j.travel_time)}" oninput="updDay(${i},'travel_time',this.value)"></div>
+        </div>
+        <div class="fr" style="margin-bottom:12px">
+          <div class="fg"><label>${t('lbl_img1')}</label>${imgZoneHTML(i,'img1',j)}</div>
+          <div class="fg"><label>${t('lbl_img2')}</label>${imgZoneHTML(i,'img2',j)}</div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-top:6px">
+          <button class="btn btn-del" onclick="removeDay(${i})">🗑 ${t('btn_del')}</button>
+        </div>
+      </div>`;
+    cont.appendChild(d);
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════
+// SUMMARY
+// ══════════════════════════════════════════════════════════════════
+function buildSummary(){
+  const nom=gv('nom_circuit')||'—';
+  const d=S.programme.length;
+  document.getElementById('summary-grid').innerHTML=`
+    <div class="si"><div class="si-l">${t('si_circuit')}</div><div class="si-v">${esc(nom)}</div></div>
+    <div class="si"><div class="si-l">${t('si_duree')}</div><div class="si-v">${esc(gv('duree'))||'—'}</div></div>
+    <div class="si"><div class="si-l">${t('si_dest')}</div><div class="si-v">${esc(gv('destination'))||'—'}</div></div>
+    <div class="si"><div class="si-l">${t('si_jours')}</div><div class="si-v">${d}</div></div>
+    <div class="si"><div class="si-l">${t('si_incl')}</div><div class="si-v">${S.incl.length}</div></div>
+    <div class="si"><div class="si-l">${t('si_slides')}</div><div class="si-v">${d+4}</div></div>`;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// PPT GENERATION (browser, pptxgenjs)
+// ══════════════════════════════════════════════════════════════════
+const C={
+  rufous:'A8371D',warm:'FFFEE9',warmCard:'F7F1DC',warmLine:'E0D8C0',
+  blk:'141414',drk:'3A3A3A',mid:'6B6B6B',lgt:'AAAAAA',
+  wh:'FFFFFF',grn:'2D7A4F'
+};
+const sh=()=>({type:'outer',blur:5,offset:2,angle:135,color:'000000',opacity:0.07});
+
+function addLogo(s,pres,x,y,w,onDark){
+  // Text logo as fallback (no file access in browser)
+  s.addShape(pres.ShapeType.rect,{x,y,w,h:0.22,fill:{color:onDark?C.rufous:'FFFFFF00'},line:{color:onDark?C.rufous:'FFFFFF00',transparency:100}});
+  s.addText("✈ S'TOURS   DESTINATION MANAGEMENT COMPANY",{
+    x,y,w,h:0.22,fontSize:8,fontFace:'Calibri',bold:true,
+    color:onDark?C.wh:C.rufous,align:'left',valign:'middle',margin:0
+  });
+}
+
+function hrLine(s,y){
+  s.addShape(pres.ShapeType&&pres.ShapeType.rect||'rect',{x:0.42,y,w:9.16,h:0.018,fill:{color:C.warmLine},line:{color:C.warmLine}});
+}
+
+function dayBadge(s,pres,n,x,y){
+  const label=lang==='zh'?`第${n}天`:`${t('ppt_jour')} ${n}`;
+  s.addShape(pres.ShapeType.roundRect,{x,y,w:0.9,h:0.28,rectRadius:0.14,fill:{color:C.rufous},line:{color:C.rufous}});
+  s.addText(label,{x,y,w:0.9,h:0.28,fontSize:8,fontFace:'Calibri',bold:true,color:C.wh,align:'center',valign:'middle',margin:0});
+}
+
+function villeBadge(s,pres,ville,x,y){
+  s.addShape(pres.ShapeType.ellipse,{x,y:y+0.04,w:0.2,h:0.2,fill:{color:C.rufous},line:{color:C.rufous}});
+  s.addText(ville.toUpperCase(),{x:x+0.26,y,w:3,h:0.26,fontSize:7.5,fontFace:'Calibri',bold:true,color:C.rufous,valign:'middle',margin:0});
+}
+
+function addImage(s,dataOrNull,x,y,w,h){
+  if(!dataOrNull)return false;
+  try{
+    s.addImage({data:dataOrNull,x,y,w,h,sizing:{type:'cover',w,h},shadow:sh()});
+    return true;
+  }catch(e){return false;}
+}
+
+async function exportPPT(){
+  // Validate
+  if(!gv('nom_circuit')){notify(t('err_nom'),'err');switchTab(0);return;}
+  if(!gv('duree')){notify(t('err_dur'),'err');switchTab(0);return;}
+  if(!S.programme.length){notify(t('err_prog'),'err');switchTab(1);return;}
+
+  const btn=document.getElementById('btn-export');
+  btn.disabled=true;
+  showLoading(true);
+
+  await sleep(80); // let UI update
+
+  try{
+    const pres=new PptxGenJS();
+    pres.layout='LAYOUT_16x9';
+    pres.author="S'TOURS DMC";
+    pres.title=gv('nom_circuit');
+
+    const total=S.programme.length+4;
+    let done=0;
+    const prog=n=>{done=n;const pct=Math.round(done/total*100);document.getElementById('prog-fill').style.width=pct+'%';document.getElementById('prog-pct').textContent=pct+'%';};
+
+    // ── SLIDE 1 COVER ──
+    {
+      const s=pres.addSlide();
+      s.background={color:C.blk};
+      addImage(s,imgStore.cover,0,0,10,5.625);
+      s.addShape(pres.ShapeType.rect,{x:0,y:3.2,w:10,h:2.425,fill:{color:'000000',transparency:20},line:{color:'000000',transparency:100}});
+      // Logo top-left
+      s.addText("✈ S'TOURS",{x:0.42,y:0.28,w:3,h:0.28,fontSize:13,fontFace:'Georgia',bold:true,color:C.wh,align:'left'});
+      s.addText('DESTINATION MANAGEMENT COMPANY',{x:0.42,y:0.54,w:4,h:0.18,fontSize:7,fontFace:'Calibri',color:'CCCCCC',letterSpacing:1});
+      // Destination badge
+      s.addShape(pres.ShapeType.roundRect,{x:8.5,y:0.24,w:1.18,h:0.3,rectRadius:0.15,fill:{color:C.rufous},line:{color:C.rufous}});
+      s.addText(gv('destination')||'MAROC',{x:8.5,y:0.24,w:1.18,h:0.3,fontSize:8,fontFace:'Calibri',bold:true,color:C.wh,align:'center',valign:'middle',margin:0});
+      // Title
+      s.addText(gv('nom_circuit'),{x:0.42,y:3.2,w:9.16,h:1.1,fontSize:36,fontFace:'Georgia',bold:true,color:C.wh,align:'left',valign:'bottom'});
+      if(gv('sous_titre'))s.addText(gv('sous_titre'),{x:0.42,y:4.35,w:7,h:0.38,fontSize:13,fontFace:'Calibri',italic:true,color:'EEE8DC',align:'left'});
+      // Info badges
+      [[`🗓  ${gv('duree')}`,0],[`👥  ${gv('taille_groupe')||'Groupe'}`,3.1],[`🌤  ${gv('saison')||''}`,6.2]].forEach(([txt,ox])=>{
+        s.addShape(pres.ShapeType.roundRect,{x:0.42+ox,y:4.85,w:2.85,h:0.48,rectRadius:0.09,fill:{color:'FFFFFF',transparency:22},line:{color:'FFFFFF',transparency:55}});
+        s.addText(txt,{x:0.42+ox,y:4.85,w:2.85,h:0.48,fontSize:10,fontFace:'Calibri',bold:true,color:C.wh,align:'center',valign:'middle',margin:0});
+      });
+      // Footer bar
+      s.addShape(pres.ShapeType.rect,{x:0,y:5.48,w:10,h:0.145,fill:{color:C.rufous},line:{color:C.rufous}});
+      s.addText("stours.ma  ·  contact@stours.ma  ·  +212 5 22 95 40 00",{x:0.4,y:5.48,w:9.2,h:0.145,fontSize:6.5,color:C.wh,align:'center',valign:'middle',margin:0});
+      prog(++done);
+    }
+
+    // ── SLIDE 2 OVERVIEW ──
+    {
+      const s=pres.addSlide();
+      s.background={color:C.warm};
+      s.addText("✈ S'TOURS  DESTINATION MANAGEMENT COMPANY",{x:0.42,y:0.25,w:5,h:0.22,fontSize:8,fontFace:'Calibri',bold:true,color:C.rufous});
+      s.addText(t('ppt_apercu'),{x:0.42,y:0.62,w:9,h:0.46,fontSize:20,fontFace:'Georgia',bold:true,color:C.blk,margin:0});
+      s.addText(`${gv('duree')}  ·  ${S.villes.join(' – ')}`,{x:0.42,y:1.12,w:9,h:0.28,fontSize:10,fontFace:'Calibri',italic:true,color:C.mid,margin:0});
+      s.addShape(pres.ShapeType.rect,{x:0.42,y:1.46,w:9.16,h:0.018,fill:{color:C.warmLine},line:{color:C.warmLine}});
+      // Highlights
+      s.addText(t('ppt_pts'),{x:0.42,y:1.62,w:4.8,h:0.32,fontSize:10,fontFace:'Calibri',bold:true,color:C.rufous,margin:0});
+      (S.pts||[]).slice(0,7).forEach((pt,i)=>{
+        const py=2.02+i*0.46;
+        s.addShape(pres.ShapeType.ellipse,{x:0.42,y:py+0.09,w:0.15,h:0.15,fill:{color:C.rufous},line:{color:C.rufous}});
+        s.addText(pt,{x:0.64,y:py,w:4.55,h:0.34,fontSize:10.5,fontFace:'Calibri',color:C.drk,valign:'middle',margin:0});
+      });
+      // Photo right
+      if(!addImage(s,imgStore.map,5.55,1.62,4.0,3.6)){
+        s.addShape(pres.ShapeType.rect,{x:5.55,y:1.62,w:4.0,h:3.6,fill:{color:C.warmCard},line:{color:C.warmLine}});
+      }
+      s.addShape(pres.ShapeType.rect,{x:0.42,y:5.32,w:9.16,h:0.018,fill:{color:C.warmLine},line:{color:C.warmLine}});
+      s.addText("stours.ma  ·  contact@stours.ma  ·  +212 5 22 95 40 00",{x:0.42,y:5.38,w:9.16,h:0.2,fontSize:7,color:C.lgt,align:'center',margin:0});
+      prog(++done);
+    }
+
+    // ── SLIDES JOURS ──
+    for(let idx=0;idx<S.programme.length;idx++){
+      const j=S.programme[idx];
+      const s=pres.addSlide();
+      s.background={color:C.warm};
+      // Logo
+      s.addText("✈ S'TOURS  DESTINATION MANAGEMENT COMPANY",{x:0.42,y:0.22,w:5,h:0.22,fontSize:8,fontFace:'Calibri',bold:true,color:C.rufous});
+      // DAY badge
+      dayBadge(s,pres,idx+1,0.42,0.56);
+      // Title
+      s.addText((j.titre||'').toUpperCase(),{x:0.42,y:0.96,w:5.6,h:0.52,fontSize:18,fontFace:'Georgia',bold:true,color:C.blk,margin:0});
+      if(j.sous_titre)s.addText(j.sous_titre,{x:0.42,y:1.5,w:5.6,h:0.28,fontSize:10,fontFace:'Calibri',italic:true,color:C.mid,margin:0});
+      const txtY=j.sous_titre?1.84:1.56;
+      s.addShape(pres.ShapeType.rect,{x:0.42,y:txtY-0.06,w:9.16,h:0.018,fill:{color:C.warmLine},line:{color:C.warmLine}});
+      // Description
+      s.addText(j.description||'',{x:0.42,y:txtY,w:5.55,h:1.9,fontSize:10.5,fontFace:'Calibri',color:C.drk,align:'left',valign:'top',margin:0,paraSpaceAfter:3});
+      // Activities
+      if(j.activites&&j.activites.length){
+        const aY=txtY+1.95;
+        s.addText(t('ppt_inclus_label'),{x:0.42,y:aY,w:5.5,h:0.24,fontSize:9,fontFace:'Calibri',bold:true,color:C.rufous,margin:0});
+        j.activites.slice(0,4).forEach((a,ai)=>{
+          const ay=aY+0.26+ai*0.28;
+          s.addShape(pres.ShapeType.rect,{x:0.42,y:ay+0.09,w:0.09,h:0.09,fill:{color:C.rufous},line:{color:C.rufous}});
+          s.addText(a,{x:0.58,y:ay,w:5.3,h:0.26,fontSize:9.5,fontFace:'Calibri',color:C.drk,valign:'middle',margin:0});
+        });
+      }
+      // Photos right
+      const px=6.26,pw=3.34;
+      if(j.img2){
+        if(!addImage(s,j.img1,px,0.56,pw,2.05))s.addShape(pres.ShapeType.rect,{x:px,y:0.56,w:pw,h:2.05,fill:{color:C.warmCard},line:{color:C.warmLine}});
+        if(!addImage(s,j.img2,px,2.72,pw,2.05))s.addShape(pres.ShapeType.rect,{x:px,y:2.72,w:pw,h:2.05,fill:{color:C.warmCard},line:{color:C.warmLine}});
+      }else{
+        if(!addImage(s,j.img1,px,0.56,pw,4.22))s.addShape(pres.ShapeType.rect,{x:px,y:0.56,w:pw,h:4.22,fill:{color:C.warmCard},line:{color:C.warmLine}});
+      }
+      // Hotel badge
+      if(j.hebergement){
+        s.addShape(pres.ShapeType.rect,{x:px,y:4.88,w:pw,h:0.28,fill:{color:C.warmCard},line:{color:C.warmLine}});
+        s.addText(`🏨  ${j.hebergement}`,{x:px,y:4.88,w:pw,h:0.28,fontSize:8.5,fontFace:'Calibri',bold:true,color:C.drk,align:'center',valign:'middle',margin:0});
+      }
+      // Bottom
+      s.addShape(pres.ShapeType.rect,{x:0.42,y:5.32,w:9.16,h:0.018,fill:{color:C.warmLine},line:{color:C.warmLine}});
+      if(j.ville)villeBadge(s,pres,j.ville,0.42,5.39);
+      if(j.travel_time)s.addText(j.travel_time,{x:3.5,y:5.39,w:3,h:0.22,fontSize:7.5,fontFace:'Calibri',color:C.mid,valign:'middle',margin:0});
+      prog(++done);
+      await sleep(10);
+    }
+
+    // ── SLIDE INCLUS/EXCLUS ──
+    {
+      const s=pres.addSlide();
+      s.background={color:C.warm};
+      s.addText("✈ S'TOURS  DESTINATION MANAGEMENT COMPANY",{x:0.42,y:0.22,w:5,h:0.22,fontSize:8,fontFace:'Calibri',bold:true,color:C.rufous});
+      s.addText(`${t('ppt_incl_h')} / ${t('ppt_excl_h')}`,{x:0.42,y:0.6,w:9,h:0.44,fontSize:18,fontFace:'Georgia',bold:true,color:C.blk,margin:0});
+      s.addShape(pres.ShapeType.rect,{x:0.42,y:1.1,w:9.16,h:0.018,fill:{color:C.warmLine},line:{color:C.warmLine}});
+      // Inclus col
+      s.addShape(pres.ShapeType.roundRect,{x:0.35,y:1.26,w:4.35,h:0.32,rectRadius:0.08,fill:{color:C.grn},line:{color:C.grn}});
+      s.addText(t('ppt_incl_h'),{x:0.35,y:1.26,w:4.35,h:0.32,fontSize:9,fontFace:'Calibri',bold:true,color:C.wh,align:'center',valign:'middle',margin:0});
+      s.addShape(pres.ShapeType.rect,{x:0.35,y:1.58,w:4.35,h:3.55,fill:{color:C.wh},line:{color:C.warmLine},shadow:sh()});
+      (S.incl||[]).forEach((x,i)=>{
+        const ty=1.7+i*0.33;if(ty>4.9)return;
+        s.addShape(pres.ShapeType.ellipse,{x:0.48,y:ty+0.09,w:0.13,h:0.13,fill:{color:C.grn},line:{color:C.grn}});
+        s.addText(x,{x:0.68,y:ty,w:3.9,h:0.3,fontSize:10,fontFace:'Calibri',color:C.drk,valign:'middle',margin:0});
+      });
+      // Non inclus col
+      s.addShape(pres.ShapeType.roundRect,{x:5.3,y:1.26,w:4.35,h:0.32,rectRadius:0.08,fill:{color:C.rufous},line:{color:C.rufous}});
+      s.addText(t('ppt_excl_h'),{x:5.3,y:1.26,w:4.35,h:0.32,fontSize:9,fontFace:'Calibri',bold:true,color:C.wh,align:'center',valign:'middle',margin:0});
+      s.addShape(pres.ShapeType.rect,{x:5.3,y:1.58,w:4.35,h:3.55,fill:{color:C.wh},line:{color:C.warmLine},shadow:sh()});
+      (S.excl||[]).forEach((x,i)=>{
+        const ty=1.7+i*0.33;if(ty>4.9)return;
+        s.addShape(pres.ShapeType.ellipse,{x:5.43,y:ty+0.09,w:0.13,h:0.13,fill:{color:C.rufous},line:{color:C.rufous}});
+        s.addText(x,{x:5.63,y:ty,w:3.9,h:0.3,fontSize:10,fontFace:'Calibri',color:C.drk,valign:'middle',margin:0});
+      });
+      s.addShape(pres.ShapeType.rect,{x:0.42,y:5.32,w:9.16,h:0.018,fill:{color:C.warmLine},line:{color:C.warmLine}});
+      s.addText("stours.ma  ·  contact@stours.ma  ·  +212 5 22 95 40 00",{x:0.42,y:5.38,w:9.16,h:0.2,fontSize:7,color:C.lgt,align:'center',margin:0});
+      prog(++done);
+    }
+
+    // ── SLIDE CONTACT ──
+    {
+      const s=pres.addSlide();
+      s.background={color:C.rufous};
+      if(imgStore.cover)addImage(s,imgStore.cover,0,0,10,5.625);
+      s.addShape(pres.ShapeType.rect,{x:0,y:0,w:10,h:5.625,fill:{color:C.rufous,transparency:30},line:{color:C.rufous,transparency:100}});
+      s.addText("✈ S'TOURS  DESTINATION MANAGEMENT COMPANY",{x:0,y:0.3,w:10,h:0.26,fontSize:9,fontFace:'Calibri',bold:true,color:C.wh,align:'center'});
+      s.addShape(pres.ShapeType.rect,{x:3.8,y:0.65,w:2.4,h:0.04,fill:{color:C.wh,transparency:55},line:{color:C.wh,transparency:100}});
+      s.addText(t('ppt_contact'),{x:0.5,y:1.0,w:9,h:0.72,fontSize:28,fontFace:'Georgia',bold:true,color:C.wh,align:'center'});
+      s.addText(t('ppt_cta'),{x:0.5,y:1.82,w:9,h:0.38,fontSize:12,fontFace:'Calibri',italic:true,color:'F0E8E0',align:'center'});
+      [['📧','contact@stours.ma',0.7],['📞','+212 5 22 95 40 00',3.75],['🌐','www.stours.ma',6.8]].forEach(([ic,val,cx])=>{
+        s.addShape(pres.ShapeType.roundRect,{x:cx,y:2.5,w:2.7,h:0.8,rectRadius:0.08,fill:{color:'FFFFFF',transparency:20},line:{color:'FFFFFF',transparency:60}});
+        s.addText(`${ic}\n${val}`,{x:cx,y:2.5,w:2.7,h:0.8,fontSize:10,fontFace:'Calibri',bold:true,color:C.wh,align:'center',valign:'middle',margin:0});
+      });
+      s.addText('Casablanca : 4, rue Turgot  ·  Marrakech : 61, rue Yougoslavie',{x:0.5,y:3.52,w:9,h:0.28,fontSize:8.5,fontFace:'Calibri',color:'F0E8E0',align:'center'});
+      s.addText(t('ppt_since'),{x:0.5,y:3.92,w:9,h:0.36,fontSize:12,fontFace:'Georgia',italic:true,color:C.warm,align:'center'});
+      s.addShape(pres.ShapeType.rect,{x:0,y:5.48,w:10,h:0.145,fill:{color:C.blk},line:{color:C.blk}});
+      s.addText("S'TOURS DMC  ·  Destination Management Company  ·  Morocco",{x:0.4,y:5.48,w:9.2,h:0.145,fontSize:6.5,color:C.warm,align:'center',valign:'middle',margin:0});
+      prog(total);
+    }
+
+    const filename=`STOURS_${(gv('nom_circuit')||'circuit').replace(/\s+/g,'_').slice(0,30)}.pptx`;
+    await pres.writeFile({fileName:filename});
+    notify(t('ok_done'),'ok');
+  }catch(err){
+    console.error(err);
+    notify('❌ Erreur : '+err.message,'err');
+  }finally{
+    btn.disabled=false;
+    showLoading(false);
+  }
+}
+
+function exportPDF(){
+  notify(t('pdf_note'),'info');
+  setTimeout(()=>window.print(),400);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════════════════════
+function gv(id){return(document.getElementById(id)?.value||'').trim();}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+function notify(msg,type){
+  const el=document.getElementById('notif');
+  el.textContent=msg;el.className=`notif show ${type||''}`;
+  clearTimeout(window._nt);window._nt=setTimeout(()=>el.classList.remove('show'),6000);
+}
+function showLoading(show,msg){
+  document.getElementById('loading').classList.toggle('show',show);
+  if(msg)document.getElementById('loading-msg').textContent=msg;
+  document.getElementById('prog-wrap').style.display=show?'block':'none';
+  if(!show){document.getElementById('prog-fill').style.width='0%';document.getElementById('prog-pct').textContent='0%';}
+}
+
+// ══════════════════════════════════════════════════════════════════
+// EXAMPLE DATA
+// ══════════════════════════════════════════════════════════════════
+function loadExample(){
+  document.getElementById('nom_circuit').value='Les Trésors du Maroc Impérial';
+  document.getElementById('sous_titre').value='Casablanca · Rabat · Fès · Meknès · Marrakech · Essaouira';
+  document.getElementById('destination').value='MAROC';
+  document.getElementById('duree').value='10 Jours / 9 Nuits';
+  document.getElementById('taille_groupe').value='Max 16 personnes';
+  document.getElementById('saison').value="Toute l'année";
+  S.villes.length=0;['Casablanca','Rabat','Fès','Meknès','Marrakech','Essaouira'].forEach(v=>S.villes.push(v));
+  renderTags('tags_villes',S.villes,'inp_villes','');
+  S.pts.length=0;['4 villes impériales en immersion totale','Guide expert francophone','Nuit en riad à Fès et Marrakech','Dîner avec spectacle folklorique','Tanneries de Fès','Jardins et palais de Marrakech'].forEach(p=>S.pts.push(p));
+  renderTags('tags_pts',S.pts,'inp_pts','');
+  S.programme.length=0;
+  [{titre:'Arrivée à Casablanca',sous_titre:'Accueil & Découverte',description:"Accueil à l'aéroport Mohammed V. Transfert à l'hôtel et visite de la Mosquée Hassan II.",activites:['Visite Mosquée Hassan II','Promenade sur la Corniche','Dîner de bienvenue'],hebergement:'Hôtel 5★ Casablanca',ville:'CASABLANCA'},
+   {titre:'Casablanca → Rabat',sous_titre:'La Capitale du Royaume',description:'Visite de la Tour Hassan, du Mausolée Mohammed V et de la Kasbah des Oudayas.',activites:['Tour Hassan','Mausolée Mohammed V','Kasbah des Oudayas'],hebergement:'Hôtel 4★ Rabat',ville:'RABAT',travel_time:'TRAVEL TIME / 1H30'},
+   {titre:'Rabat → Fès',sous_titre:'Cité Spirituelle',description:"En route vers Fès. Première immersion dans la médina de Fès el-Bali, patrimoine UNESCO.",activites:["Arrivée au Riad",'Visite médina','Cours de cuisine'],hebergement:'Riad 5★ Fès',ville:'FÈS',travel_time:'TRAVEL TIME / 3H'},
+   {titre:'Fès – Journée Complète',sous_titre:'La Cité Millénaire',description:'Tanneries Chouara, Medersa Bou Inania, souks et ateliers artisanaux.',activites:['Tanneries Chouara','Medersa Bou Inania','Souk Attarine'],hebergement:'Riad 5★ Fès',ville:'FÈS'},
+   {titre:'Fès → Meknès & Volubilis',sous_titre:'Cité Ismaïlienne',description:'Porte Bab Mansour, Mausolée Moulay Ismail et ruines romaines de Volubilis.',activites:['Bab Mansour','Moulay Ismail','Volubilis UNESCO'],hebergement:'Hôtel 4★ Meknès',ville:'MEKNÈS',travel_time:'TRAVEL TIME / 1H'},
+   {titre:'Meknès → Marrakech',sous_titre:'La Ville Rouge',description:"Transfert vers Marrakech. Soirée sur la place Jemaa el-Fna.",activites:['Installation Riad','Soirée Jemaa el-Fna'],hebergement:'Riad Luxe 5★',ville:'MARRAKECH',travel_time:'TRAVEL TIME / 6H'},
+   {titre:'Marrakech – Patrimoine',sous_titre:'La Perle du Sud',description:"Bahia, Tombeaux Saadiens, jardins Majorelle. Dîner avec spectacle folklorique.",activites:['Palais de la Bahia','Tombeaux Saadiens','Jardins Majorelle'],hebergement:'Riad Luxe 5★',ville:'MARRAKECH'},
+   {titre:'Marrakech → Essaouira',sous_titre:"La Cité des Alizés",description:"Remparts, médina UNESCO, déjeuner fruits de mer face à l'Atlantique.",activites:['Remparts','Médina UNESCO','Déjeuner fruits de mer'],hebergement:'Riad Luxe 5★',ville:'ESSAOUIRA',travel_time:'TRAVEL TIME / 2H30'},
+   {titre:'Marrakech Libre & Départ',sous_titre:'Derniers Souvenirs',description:"Matinée libre. Option hammam. Transfert aéroport.",activites:['Souks','Hammam (option)','Transfert aéroport'],hebergement:'Vol retour',ville:'MARRAKECH'}
+  ].forEach(d=>S.programme.push({...d,img1:null,img2:null}));
+  renderDays();
+  S.incl.length=0;["Transport climatisé","9 nuits hôtels 4★/5★","Petit-déjeuner inclus","Guide francophone S'TOURS","Droits d'entrée","1 dîner de bienvenue","1 dîner spectacle","Cours de cuisine Fès","Transferts aéroport","Assistance 24h/24"].forEach(x=>S.incl.push(x));
+  renderTags('tags_incl',S.incl,'inp_incl','grn');
+  S.excl.length=0;['Vols internationaux','Visa','Repas non mentionnés','Boissons','Pourboires','Activités optionnelles','Assurance voyage','Dépenses personnelles'].forEach(x=>S.excl.push(x));
+  renderTags('tags_excl',S.excl,'inp_excl','');
+  notify('✅ Exemple chargé ! Ajoutez vos photos et exportez.','ok');
+  switchTab(1);
+}
+
+
+// ══════════════════════════════════════════════════════════════════
+// LIBRARY = ONEDRIVE BDD MEDIA BROWSER
+// ══════════════════════════════════════════════════════════════════
+
+let libState = {
+  token: null,
+  username: '',
+  stack: [],       // [{id, name}] navigation stack
+  allItems: [],    // current folder items
+  selectedPhoto: null,
+  view: 'grid',
+  searchTimer: null,
+  isDemo: false,
+};
+
+// ── INIT: restore token if saved ──
+(function libRestoreToken() {
+  try {
+    const saved = localStorage.getItem('stours_lib_token');
+    const exp   = parseInt(localStorage.getItem('stours_lib_token_exp') || '0');
+    const user  = localStorage.getItem('stours_lib_user') || '';
+    if (saved && exp > Date.now() + 60000) {
+      libState.token    = saved;
+      libState.username = user;
+    }
+  } catch(e) {}
+})();
+
+// ── SIGN IN ──
+async function libLogin() {
+  if (OD_CONFIG.clientId === 'YOUR_AZURE_APP_CLIENT_ID') {
+    // Demo mode
+    libState.isDemo    = true;
+    libState.username  = 'votre-email@stours.ma';
+    showLibBrowser();
+    libLoadFolder(null);
+    notify("🎯 Mode démo — aperçu de votre BDD MEDIA. Configurez Azure AD pour vos vraies photos.", 'info');
+    return;
+  }
+  // Real OAuth2 implicit (PKCE recommended for prod)
+  const params = new URLSearchParams({
+    client_id: OD_CONFIG.clientId,
+    response_type: 'token',
+    redirect_uri: OD_CONFIG.redirectUri,
+    scope: OD_CONFIG.scope,
+    response_mode: 'fragment',
+    state: 'lib_auth',
+    prompt: 'select_account',
+  });
+  const url = `https://login.microsoftonline.com/${OD_CONFIG.tenant}/oauth2/v2.0/authorize?${params}`;
+  const popup = window.open(url, 'msauth', 'width=520,height=640,scrollbars=yes');
+  const poll = setInterval(() => {
+    try {
+      const hash = popup?.location?.hash || '';
+      if (hash.includes('access_token')) {
+        const p = new URLSearchParams(hash.slice(1));
+        libState.token = p.get('access_token');
+        const exp = Date.now() + (parseInt(p.get('expires_in') || '3600') * 1000);
+        popup.close(); clearInterval(poll);
+        // Get user info
+        fetch('https://graph.microsoft.com/v1.0/me?$select=displayName,mail', {
+          headers: { Authorization: `Bearer ${libState.token}` }
+        }).then(r => r.json()).then(u => {
+          libState.username = u.mail || u.displayName || 'votre-email@stours.ma';
+          try {
+            localStorage.setItem('stours_lib_token', libState.token);
+            localStorage.setItem('stours_lib_token_exp', exp);
+            localStorage.setItem('stours_lib_user', libState.username);
+          } catch(e) {}
+          showLibBrowser();
+          libLoadFolder(null);
+          notify("✅ Connecté à OneDrive S'TOURS — BDD MEDIA disponible !", 'ok');
+        }).catch(() => { showLibBrowser(); libLoadFolder(null); });
+      }
+    } catch(e) {}
+    if (popup?.closed) clearInterval(poll);
+  }, 500);
+}
+
+// Handle redirect token (if popup not used)
+(function handleLibRedirect() {
+  const hash = window.location.hash;
+  if (hash.includes('access_token') && hash.includes('state=lib_auth')) {
+    const p = new URLSearchParams(hash.slice(1));
+    libState.token = p.get('access_token');
+    const exp = Date.now() + (parseInt(p.get('expires_in') || '3600') * 1000);
+    try {
+      localStorage.setItem('stours_lib_token', libState.token);
+      localStorage.setItem('stours_lib_token_exp', exp);
+    } catch(e) {}
+    history.replaceState(null, '', window.location.pathname);
+  }
+})();
+
+function libSignOut() {
+  libState.token = null; libState.isDemo = false;
+  libState.stack = []; libState.selectedPhoto = null;
+  try { localStorage.removeItem('stours_lib_token'); localStorage.removeItem('stours_lib_token_exp'); localStorage.removeItem('stours_lib_user'); } catch(e) {}
+  document.getElementById('lib-signin-panel').style.display = '';
+  document.getElementById('lib-browser-panel').style.display = 'none';
+  notify('Déconnecté de OneDrive', 'info');
+}
+
+function showLibBrowser() {
+  document.getElementById('lib-signin-panel').style.display = 'none';
+  document.getElementById('lib-browser-panel').style.display = 'block';
+  // Update user badge
+  const initials = (libState.username || 'J').split('@')[0].slice(0,2).toUpperCase();
+  const avatar = document.getElementById('lib-avatar');
+  const uname  = document.getElementById('lib-username');
+  if (avatar) avatar.textContent = initials;
+  if (uname)  uname.textContent  = libState.username || 'votre-email@stours.ma';
+}
+
+// ── NAVIGATION ──
+function libNavRoot() {
+  libState.stack = [];
+  libState.selectedPhoto = null;
+  hideLibActionBar();
+  libLoadFolder(null);
+  document.getElementById('lib-breadcrumb').innerHTML = '<span class="lib-crumb" onclick="libNavRoot()">☁️ BDD MEDIA</span>';
+}
+
+function libNavFolder(id, name) {
+  libState.stack.push({id, name});
+  libUpdateBreadcrumb();
+  libLoadFolder(id);
+}
+
+function libNavTo(idx) {
+  libState.stack = libState.stack.slice(0, idx + 1);
+  libUpdateBreadcrumb();
+  libLoadFolder(libState.stack[idx].id);
+}
+
+function libUpdateBreadcrumb() {
+  const bc = document.getElementById('lib-breadcrumb');
+  bc.innerHTML = '<span class="lib-crumb" onclick="libNavRoot()">☁️ BDD MEDIA</span>';
+  libState.stack.forEach((item, i) => {
+    bc.innerHTML += ` <span style="color:var(--lgt)">›</span> <span class="lib-crumb" onclick="libNavTo(${i})">${item.name}</span>`;
+  });
+}
+
+function libRefresh() {
+  const id = libState.stack.length ? libState.stack[libState.stack.length-1].id : null;
+  libLoadFolder(id);
+}
+
+// ── LOAD FOLDER ──
+async function libLoadFolder(folderId) {
+  libState.selectedPhoto = null;
+  hideLibActionBar();
+  document.getElementById('lib-content').innerHTML = '<div class="lib-loading"><div class="lib-spinner"></div>Chargement…</div>';
+
+  if (libState.isDemo) {
+    await sleep(350);
+    libRenderDemoFolder(folderId);
+    return;
+  }
+
+  try {
+    let endpoint;
+    if (!folderId) {
+      // Root of BDD MEDIA folder in personal OneDrive
+      endpoint = `${OD_CONFIG.baseUrl}/me/drive/root:/${encodeURIComponent(OD_CONFIG.bddMediaFolder)}:/children?$select=id,name,folder,file,@microsoft.graph.downloadUrl&$expand=thumbnails($select=small,medium)&$orderby=name&$top=200`;
+    } else {
+      // Navigate by item ID (works for both personal and business OneDrive)
+      endpoint = `${OD_CONFIG.baseUrl}/me/drive/items/${folderId}/children?$select=id,name,folder,file,@microsoft.graph.downloadUrl&$expand=thumbnails($select=small,medium)&$orderby=name&$top=200`;
+    }
+    const res = await fetch(endpoint, { headers: { Authorization: `Bearer ${libState.token}` } });
+    if (res.status === 401) { libSignOut(); notify('Session expirée — reconnectez-vous', 'err'); return; }
+    if (!res.ok) throw new Error(await res.text());
+    const data = await res.json();
+    libState.allItems = data.value || [];
+    libRenderItems(libState.allItems);
+  } catch(e) {
+    document.getElementById('lib-content').innerHTML = `
+      <div class="lib-loading">❌ Erreur de connexion OneDrive<br><small style="color:var(--r)">${e.message}</small><br><br>
+      <button class="btn btn-r" style="margin:10px auto;display:block" onclick="libLogin()">Reconnecter</button>
+      <button class="btn btn-sec" style="margin:4px auto;display:block" onclick="libState.isDemo=true;libNavRoot()">Mode démo</button></div>`;
+  }
+}
+
+// ── DEMO RENDERING ──
+function libRenderDemoFolder(folderId) {
+  if (!folderId) {
+    // Root: show destination folders
+    libState.allItems = OD_DEST_FOLDERS.map(f => ({ id:f.id, name:f.name, isFolder:true, _emoji:f.emoji, _count:f.count }));
+    libRenderItems(libState.allItems);
+  } else {
+    const imgs = OD_DEMO_IMGS_BY_DEST[folderId] || [];
+    libState.allItems = imgs.map(img => ({ id:img.id, name:img.name, isFolder:false, _demoUrl:img.url }));
+    libRenderItems(libState.allItems);
+  }
+}
+
+// ── RENDER ──
+function libRenderItems(items) {
+  const q = (document.getElementById('lib-search-inp')?.value || '').toLowerCase();
+  let filtered = items.filter(item => !q || item.name.toLowerCase().includes(q));
+  // Sort: folders first
+  filtered.sort((a,b) => {
+    const af = !!(a.folder||a.isFolder), bf = !!(b.folder||b.isFolder);
+    if (af && !bf) return -1; if (!af && bf) return 1;
+    return a.name.localeCompare(b.name);
+  });
+
+  const cont = document.getElementById('lib-content');
+  // Update count
+  const countEl = document.getElementById('lib-search-count');
+  if (countEl) countEl.textContent = q ? `${filtered.length} résultat${filtered.length!==1?'s':''} pour "${q}"` : '';
+
+  if (!filtered.length) {
+    cont.innerHTML = q
+      ? `<div class="lib-loading">🔍 Aucun résultat pour "<strong>${q}</strong>"<br><small>Essayez un autre mot-clé</small><br><button class="btn btn-sec" style="margin-top:10px;font-size:12px" onclick="document.getElementById('lib-search-inp').value='';libSearch('')">✕ Effacer la recherche</button></div>`
+      : '<div class="lib-loading">📂 Dossier vide</div>';
+    return;
+  }
+
+  const isRoot = libState.stack.length === 0;
+  if (isRoot || filtered.some(f => f.folder || f.isFolder)) {
+    // Folder view
+    cont.innerHTML = `<div class="lib-folder-grid">${filtered.map(item => {
+      const isFolder = !!(item.folder || item.isFolder);
+      if (isFolder) {
+        const emoji = item._emoji || '📁';
+        const cnt = item._count || item.folder?.childCount || '—';
+        return `<div class="lib-folder-card" onclick="libNavFolder('${item.id}','${item.name.replace(/'/g,"\\'")}')">
+          <div class="lib-folder-emoji">${emoji}</div>
+          <div class="lib-folder-info">
+            <div class="lib-folder-name">${item.name}</div>
+            <div class="lib-folder-count">${cnt} photo${cnt>1?'s':''}</div>
+          </div>
+        </div>`;
+      }
+      return ''; // skip files at root
+    }).join('')}</div>`;
+  } else {
+    // Photo grid
+    const photos = filtered.filter(item => {
+      const isFolder = !!(item.folder || item.isFolder);
+      if (isFolder) return false;
+      return /\.(jpg|jpeg|png|webp|gif)$/i.test(item.name);
+    });
+    if (!photos.length) { cont.innerHTML = '<div class="lib-loading">📂 Aucune image dans ce dossier</div>'; return; }
+
+    cont.innerHTML = `
+      <div style="font-size:11px;color:var(--mid);margin-bottom:8px">${photos.length} photo${photos.length>1?'s':''} — cliquez pour sélectionner, puis insérez dans votre circuit</div>
+      <div class="lib-photo-grid">${photos.map(photo => {
+        const thumb = photo._demoUrl
+          || photo.thumbnails?.[0]?.medium?.url
+          || photo['@microsoft.graph.downloadUrl']
+          || null;
+        const selClass = libState.selectedPhoto?.id === photo.id ? ' selected' : '';
+        return `<div class="lib-photo-card${selClass}" id="lpcard_${photo.id}" onclick="libSelectPhoto(${JSON.stringify(JSON.stringify(photo)).slice(1,-1)},this)">
+          ${thumb ? `<img class="lib-photo-img" src="${thumb}" loading="lazy" onerror="this.parentElement.querySelector('.lib-folder-emoji')&&(this.style.display='none')">` : '<div class="lib-folder-emoji" style="height:90px;font-size:28px">🖼️</div>'}
+          <div class="lib-photo-check">✓</div>
+          <div class="lib-use-btn" onclick="event.stopPropagation();libQuickInsert(${JSON.stringify(JSON.stringify(photo)).slice(1,-1)})">+ Insérer</div>
+          <div class="lib-photo-name">${photo.name}</div>
+        </div>`;
+      }).join('')}</div>`;
+  }
+}
+
+// ── SELECTION ──
+function libSelectPhoto(photoJson, el) {
+  let photo;
+  try { photo = JSON.parse(photoJson); } catch(e) { return; }
+  libState.selectedPhoto = photo;
+  // Update UI
+  document.querySelectorAll('.lib-photo-card').forEach(c => c.classList.remove('selected'));
+  if (el) el.classList.add('selected');
+  document.getElementById('lib-sel-name').textContent = photo.name;
+  document.getElementById('lib-action-bar').style.display = 'flex';
+}
+
+function hideLibActionBar() {
+  const bar = document.getElementById('lib-action-bar');
+  if (bar) bar.style.display = 'none';
+  libState.selectedPhoto = null;
+}
+
+// ── INSERT PHOTO ──
+async function libInsertPhoto(target) {
+  const photo = libState.selectedPhoto;
+  if (!photo) return;
+  const b64 = await libFetchAsBase64(photo);
+  if (!b64) return;
+  // target = 'cover' | 'map'
+  imgStore[target] = b64;
+  ['thumb_','name_','zone_','clear_'].forEach((prefix,i) => {
+    const el = document.getElementById(prefix + target);
+    if (!el) return;
+    if (i===0) { el.src=b64; el.classList.add('show'); }
+    else if (i===1) el.textContent = photo.name;
+    else if (i===2) el.classList.add('has-image');
+    else el.style.display = 'block';
+  });
+  notify(`✅ "${photo.name}" → ${target==='cover'?'Couverture':'Carte'}`, 'ok');
+  switchTab(0);
+}
+
+async function libInsertPhotoToCurrentDay() {
+  const photo = libState.selectedPhoto;
+  if (!photo) { notify('Sélectionnez une photo d\'abord', 'err'); return; }
+  if (!S.programme.length) { notify('Ajoutez d\'abord un jour dans Programme', 'err'); return; }
+  const b64 = await libFetchAsBase64(photo);
+  if (!b64) return;
+  // Insert in last day (or current active day)
+  const dayIdx = S.programme.length - 1;
+  const slot   = S.programme[dayIdx].img1 ? 'img2' : 'img1';
+  S.programme[dayIdx][slot] = b64;
+  renderDays();
+  notify(`✅ "${photo.name}" → Jour ${dayIdx+1} (${slot})`, 'ok');
+  switchTab(1);
+}
+
+async function libQuickInsert(photoJson) {
+  let photo;
+  try { photo = JSON.parse(photoJson); } catch(e) { return; }
+  libState.selectedPhoto = photo;
+  await libInsertPhotoToCurrentDay();
+}
+
+async function libFetchAsBase64(photo) {
+  try {
+    let url = photo._demoUrl || photo['@microsoft.graph.downloadUrl'];
+    if (!url && libState.token) {
+      const r = await fetch(`${OD_CONFIG.baseUrl}/me/drive/items/${photo.id}?select=@microsoft.graph.downloadUrl`, { headers: { Authorization: `Bearer ${libState.token}` } });
+      const d = await r.json();
+      url = d['@microsoft.graph.downloadUrl'];
+    }
+    const res = await fetch(url);
+    const blob = await res.blob();
+    return await new Promise(resolve => { const r = new FileReader(); r.onload = () => resolve(r.result); r.readAsDataURL(blob); });
+  } catch(e) {
+    notify('❌ Impossible de charger la photo', 'err');
+    return null;
+  }
+}
+
+// ── SEARCH ──
+function libSearch(q) {
+  const clearBtn = document.getElementById('lib-search-clear');
+  if (clearBtn) clearBtn.style.display = q ? 'block' : 'none';
+  clearTimeout(libState.searchTimer);
+  libState.searchTimer = setTimeout(() => libRenderItems(libState.allItems), 220);
+}
+
+// ── VIEW TOGGLE ──
+function libSetView(v) {
+  libState.view = v;
+  document.getElementById('lib-btn-grid')?.classList.toggle('active', v==='grid');
+  document.getElementById('lib-btn-list')?.classList.toggle('active', v==='list');
+  libRenderItems(libState.allItems);
+}
+
+// ── AUTO-SHOW BROWSER IF TOKEN EXISTS ──
+function libInitIfLoggedIn() {
+  libCheckSavedLink();
+  if (libState.token || libState.isDemo) {
+    showLibBrowser();
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
+// ONEDRIVE / SHAREPOINT INTEGRATION
+// ══════════════════════════════════════════════════════════════════
+
+// Azure AD App config for S'TOURS
+// NOTE: These are placeholder values - replace with real Azure App Registration
+const OD_CONFIG = {
+  // ─────────────────────────────────────────────────────────
+  // OneDrive PERSONNEL (live.com / Hotmail / Outlook.com)
+  // ─────────────────────────────────────────────────────────
+  // Votre App ID — créez-la gratuitement sur :
+  // portal.azure.com → "Comptes Microsoft personnels" ✓
+  clientId: 'YOUR_AZURE_APP_CLIENT_ID',
+
+  // Compte personnel Microsoft (live.com / hotmail / outlook)
+  tenant:   'consumers',
+
+  // URL de retour après login (= URL où est hébergée l'app)
+  redirectUri: window.location.href.split('?')[0],
+
+  // Permissions OneDrive personnel — lecture fichiers
+  scope: 'Files.Read User.Read',
+
+  // Microsoft Graph API
+  baseUrl: 'https://graph.microsoft.com/v1.0',
+
+  // Nom de votre dossier photos dans OneDrive
+  // (dossier à la racine de votre OneDrive personnel)
+  bddMediaFolder: 'BDD MEDIA',
+};
+
+let odState = {
+  token: null,
+  currentTarget: null,  // {type:'global'|'day', key:string, idx?:number, slot?:string}
+  selectedItem: null,
+  stack: [],            // navigation stack [{id, name}]
+  allItems: [],         // current folder items
+  searchTimeout: null,
+  isDemo: false         // demo mode without real token
+};
+
+// ══════════════════════════════════════════════════════════════
+// DEMO DATA — Structure miroir de votre BDD MEDIA S'TOURS
+// (dossiers par destination, comme dans votre OneDrive)
+// ══════════════════════════════════════════════════════════════
+const OD_DEST_FOLDERS = [
+  { id:'d_casa',    name:'Casablanca',       emoji:'🌆', count:24 },
+  { id:'d_marr',    name:'Marrakech',        emoji:'🌹', count:67 },
+  { id:'d_fes',     name:'Fès',              emoji:'🕌', count:41 },
+  { id:'d_rabat',   name:'Rabat',            emoji:'🏛️', count:18 },
+  { id:'d_meknes',  name:'Meknès',           emoji:'🏰', count:15 },
+  { id:'d_essa',    name:'Essaouira',        emoji:'⛵', count:29 },
+  { id:'d_merz',    name:'Merzouga',         emoji:'🏜️', count:38 },
+  { id:'d_ouarz',   name:'Ouarzazate',       emoji:'🎬', count:22 },
+  { id:'d_agadir',  name:'Agadir',           emoji:'🏖️', count:19 },
+  { id:'d_chefcha', name:'Chefchaouen',      emoji:'🔵', count:31 },
+  { id:'d_ourika',  name:'Vallée de l\'Ourika', emoji:'⛰️', count:14 },
+  { id:'d_dades',   name:'Gorges du Dadès',  emoji:'🪨', count:16 },
+  { id:'d_todra',   name:'Gorges du Todra',  emoji:'🏔️', count:12 },
+  { id:'d_volub',   name:'Volubilis',        emoji:'🏺', count:9  },
+  { id:'d_atlas',   name:'Haut-Atlas',       emoji:'🗻', count:21 },
+  { id:'d_hotels',  name:'Hôtels & Riads',   emoji:'🏨', count:55 },
+  { id:'d_food',    name:'Gastronomie',      emoji:'🍽️', count:33 },
+  { id:'d_activ',   name:'Activités',        emoji:'🐪', count:28 },
+  { id:'d_groups',  name:'Groupes & Events', emoji:'👥', count:17 },
+  { id:'d_covers',  name:'Couvertures PPT',  emoji:'🖼️', count:42 },
+];
+
+// Mapping ville → dossier destination (pour suggestion automatique)
+const VILLE_TO_FOLDER = {
+  'casablanca':['d_casa'],'casa':['d_casa'],
+  'marrakech':['d_marr'],'marrakesh':['d_marr'],
+  'fès':['d_fes'],'fes':['d_fes'],'fez':['d_fes'],
+  'rabat':['d_rabat'],
+  'meknès':['d_meknes'],'meknes':['d_meknes'],
+  'essaouira':['d_essa'],
+  'merzouga':['d_merz'],'sahara':['d_merz'],'erg chebbi':['d_merz'],
+  'ouarzazate':['d_ouarz'],
+  'agadir':['d_agadir'],
+  'chefchaouen':['d_chefcha'],'chaouen':['d_chefcha'],
+  'ourika':['d_ourika'],
+  'dadès':['d_dades'],'dades':['d_dades'],
+  'todra':['d_todra'],
+  'volubilis':['d_volub'],
+  'atlas':['d_atlas'],'tichka':['d_atlas'],'toubkal':['d_atlas'],
+};
+
+// Demo images per destination folder
+const OD_DEMO_IMGS_BY_DEST = {
+  d_casa: [
+    {id:'casa1', name:'Mosquee_Hassan_II_facade.jpg',      url:'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Mosque_Hassan_II.jpg/640px-Mosque_Hassan_II.jpg'},
+    {id:'casa2', name:'Mosquee_Hassan_II_interieur.jpg',   url:'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Interior_Hassan_II_Mosque.jpg/640px-Interior_Hassan_II_Mosque.jpg'},
+    {id:'casa3', name:'Corniche_Casablanca_nuit.jpg',      url:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Casablanca_Corniche.jpg/640px-Casablanca_Corniche.jpg'},
+    {id:'casa4', name:'Ancienne_Medina_Casa.jpg',          url:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Old_Medina_Casablanca.jpg/640px-Old_Medina_Casablanca.jpg'},
+  ],
+  d_marr: [
+    {id:'marr1', name:'Jemaa_el_Fna_soir.jpg',            url:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Jamaa_el_Fna_at_night.jpg/640px-Jamaa_el_Fna_at_night.jpg'},
+    {id:'marr2', name:'Palais_Bahia_cour.jpg',             url:'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/The_Bahia_Palace_Marrakesh_Morocco_02.jpg/640px-The_Bahia_Palace_Marrakesh_Morocco_02.jpg'},
+    {id:'marr3', name:'Jardins_Majorelle_bleu.jpg',        url:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Majorelle_Garden_Marrakech.jpg/640px-Majorelle_Garden_Marrakech.jpg'},
+    {id:'marr4', name:'Koutoubia_minaret.jpg',             url:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Minaret_de_la_Koutoubia.jpg/480px-Minaret_de_la_Koutoubia.jpg'},
+    {id:'marr5', name:'Tombeaux_Saadiens.jpg',             url:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Saadian_Tombs_Marrakech.jpg/640px-Saadian_Tombs_Marrakech.jpg'},
+    {id:'marr6', name:'Souk_Teinturiers.jpg',              url:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Souks_of_Marrakech.jpg/640px-Souks_of_Marrakech.jpg'},
+  ],
+  d_fes: [
+    {id:'fes1',  name:'Tanneries_Chouara_vue.jpg',         url:'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Tanneries_of_F%C3%A8s%2C_Morocco.jpg/640px-Tanneries_of_F%C3%A8s%2C_Morocco.jpg'},
+    {id:'fes2',  name:'Bab_Bou_Jeloud_porte.jpg',          url:'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Bab_Bou_Jeloud.jpg/640px-Bab_Bou_Jeloud.jpg'},
+    {id:'fes3',  name:'Medina_Fes_vue_aerienne.jpg',       url:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Fes_el_Bali.jpg/640px-Fes_el_Bali.jpg'},
+    {id:'fes4',  name:'Medersa_Bou_Inania.jpg',            url:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Bou_Inania_madrasa_Fez.jpg/640px-Bou_Inania_madrasa_Fez.jpg'},
+  ],
+  d_rabat: [
+    {id:'rab1',  name:'Tour_Hassan_stele.jpg',              url:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Tour_hassan_2.jpg/640px-Tour_hassan_2.jpg'},
+    {id:'rab2',  name:'Mausolee_Mohammed_V.jpg',            url:'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Mohammed_V_mausoleum_Rabat.jpg/640px-Mohammed_V_mausoleum_Rabat.jpg'},
+    {id:'rab3',  name:'Kasbah_des_Oudayas.jpg',             url:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Kasbah_of_the_Udayas_Rabat.jpg/640px-Kasbah_of_the_Udayas_Rabat.jpg'},
+  ],
+  d_essa: [
+    {id:'essa1', name:'Remparts_Essaouira_Atlantique.jpg',  url:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Essaouira_Ramparts.jpg/640px-Essaouira_Ramparts.jpg'},
+    {id:'essa2', name:'Port_Pecheurs_Essaouira.jpg',        url:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Essaouira_Harbour.jpg/640px-Essaouira_Harbour.jpg'},
+    {id:'essa3', name:'Medina_Essaouira_ruelles.jpg',       url:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Essaouira_medina.jpg/640px-Essaouira_medina.jpg'},
+  ],
+  d_merz: [
+    {id:'merz1', name:'Dunes_Erg_Chebbi_coucher.jpg',       url:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Sahara_Desert_Morocco.jpg/640px-Sahara_Desert_Morocco.jpg'},
+    {id:'merz2', name:'Bivouac_luxe_Sahara.jpg',            url:'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Sahara_Desert_Campsite.jpg/640px-Sahara_Desert_Campsite.jpg'},
+    {id:'merz3', name:'Dromadaires_dunes.jpg',              url:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Camels_in_Morocco.jpg/640px-Camels_in_Morocco.jpg'},
+    {id:'merz4', name:'Lever_soleil_Erg_Chebbi.jpg',        url:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Camels_in_desert.jpg/640px-Camels_in_desert.jpg'},
+  ],
+  d_ouarz: [
+    {id:'ouarz1',name:'Ait_Benhaddou_vue.jpg',              url:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Ait_Ben_Haddou_1.jpg/640px-Ait_Ben_Haddou_1.jpg'},
+    {id:'ouarz2',name:'Kasbah_Taourirt.jpg',                url:'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Kasbah_Taourirt.jpg/640px-Kasbah_Taourirt.jpg'},
+  ],
+  d_chefcha: [
+    {id:'chef1', name:'Chefchaouen_ruelles_bleues.jpg',     url:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Chefchaouen_-_Morocco.jpg/640px-Chefchaouen_-_Morocco.jpg'},
+    {id:'chef2', name:'Chefchaouen_vue_panoramique.jpg',    url:'https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Chefchaouen_Morocco.jpg/640px-Chefchaouen_Morocco.jpg'},
+  ],
+  d_hotels: [
+    {id:'hot1',  name:'Riad_piscine_Marrakech.jpg',         url:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Riad_Marrakech.jpg/640px-Riad_Marrakech.jpg'},
+    {id:'hot2',  name:'Kasbah_hotel_Dades.jpg',             url:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Kasbah_Ait_Ben_Haddou_hotel.jpg/640px-Kasbah_Ait_Ben_Haddou_hotel.jpg'},
+  ],
+  d_food: [
+    {id:'food1', name:'Tajine_agneau_citron.jpg',           url:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Moroccan_Chicken_Tagine.jpg/640px-Moroccan_Chicken_Tagine.jpg'},
+    {id:'food2', name:'The_menthe_traditionnel.jpg',        url:'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Moroccan_mint_tea.jpg/640px-Moroccan_mint_tea.jpg'},
+  ],
+  d_activ: [
+    {id:'act1',  name:'Excursion_dromadaire_desert.jpg',    url:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Camels_in_desert.jpg/640px-Camels_in_desert.jpg'},
+    {id:'act2',  name:'Souk_artisans_Marrakech.jpg',        url:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Souks_of_Marrakech.jpg/640px-Souks_of_Marrakech.jpg'},
+  ],
+  d_covers: [
+    {id:'cov1',  name:'Cover_Maroc_general.jpg',            url:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Sahara_Desert_Morocco.jpg/640px-Sahara_Desert_Morocco.jpg'},
+    {id:'cov2',  name:'Cover_Marrakech_Koutoubia.jpg',      url:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Minaret_de_la_Koutoubia.jpg/480px-Minaret_de_la_Koutoubia.jpg'},
+    {id:'cov3',  name:'Cover_Fes_panorama.jpg',             url:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Fes_el_Bali.jpg/640px-Fes_el_Bali.jpg'},
+    {id:'cov4',  name:'Cover_Sahara_dunes.jpg',             url:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Sahara_Desert_Morocco.jpg/640px-Sahara_Desert_Morocco.jpg'},
+  ],
+};
+
+// ── OPEN / CLOSE ──
+function odOpen(target) {
+  odState.currentTarget = target;
+  odState.selectedItem = null;
+  document.getElementById('od-sel-info').textContent = 'Aucune photo sélectionnée';
+  document.getElementById('od-confirm-btn').disabled = true;
+  document.getElementById('od-modal').classList.add('show');
+
+  if (odState.token || odState.isDemo) {
+    showOdBrowser();
+    // Smart navigation: if opening for a day, auto-navigate to that city's folder
+    const suggestedFolder = odGetSuggestedFolder(target);
+    if (suggestedFolder) {
+      odState.stack = [{id: suggestedFolder.id, name: suggestedFolder.name}];
+      updateBreadcrumb();
+      showOdSuggestionBadge(suggestedFolder.name);
+      odLoadFolder(suggestedFolder.id);
+    } else {
+      odState.stack = [];
+      odLoadFolder(null);
+    }
+  } else {
+    document.getElementById('od-auth-panel').style.display = 'block';
+    document.getElementById('od-browser').style.display = 'none';
+  }
+}
+
+function odGetSuggestedFolder(target) {
+  let city = '';
+  if (target.type === 'day' && S.programme[target.idx]) {
+    city = (S.programme[target.idx].ville || '').toLowerCase().trim();
+    // Also check title
+    if (!city) city = (S.programme[target.idx].titre || '').toLowerCase();
+  } else if (target.type === 'global' && target.key === 'cover') {
+    // For cover, use circuit destination
+    city = (document.getElementById('destination')?.value || '').toLowerCase();
+  }
+  if (!city) return null;
+  // Find matching dest folder
+  for (const [key, ids] of Object.entries(VILLE_TO_FOLDER)) {
+    if (city.includes(key)) {
+      const folderId = ids[0];
+      const folder = OD_DEST_FOLDERS.find(f => f.id === folderId);
+      if (folder) return folder;
+    }
+  }
+  return null;
+}
+
+function showOdSuggestionBadge(folderName) {
+  const header = document.getElementById('od-suggestion-badge');
+  if (header) {
+    header.textContent = `💡 Suggestion : dossier "${folderName}" ouvert automatiquement`;
+    header.style.display = 'block';
+    setTimeout(() => header.style.display='none', 4000);
+  }
+}
+
+function odClose() {
+  document.getElementById('od-modal').classList.remove('show');
+  odState.currentTarget = null;
+  odState.selectedItem = null;
+}
+
+// ── AUTH ──
+async function odLogin() {
+  // Unified: always use the central MS365 auth
+  await msSignIn();
+  if (MS365.token || MS365.isDemo) {
+    odState.token  = MS365.token;
+    odState.isDemo = MS365.isDemo;
+    showOdBrowser();
+    odLoadFolder(null);
+  }
+}
+
+// Handle token from URL fragment (after redirect) + token persistence
+(function() {
+  const hash = window.location.hash;
+  if (hash.includes('access_token') && hash.includes('state=od_auth')) {
+    const p = new URLSearchParams(hash.slice(1));
+    odState.token = p.get('access_token');
+    const exp = Date.now() + (parseInt(p.get('expires_in') || 3600) * 1000);
+    try { localStorage.setItem('stours_od_token', odState.token);
+          localStorage.setItem('stours_od_token_exp', exp); } catch(e) {}
+    history.replaceState(null, '', window.location.pathname);
+    notify("✅ Connecté à OneDrive S'TOURS — BDD MEDIA accessible !", 'ok');
+  } else {
+    // Try to restore token from localStorage
+    try {
+      const saved = localStorage.getItem('stours_od_token');
+      const exp = parseInt(localStorage.getItem('stours_od_token_exp') || '0');
+      if (saved && exp > Date.now() + 60000) {
+        odState.token = saved;
+      }
+    } catch(e) {}
+  }
+})();
+
+function showOdBrowser() {
+  document.getElementById('od-auth-panel').style.display = 'none';
+  document.getElementById('od-browser').style.display = 'flex';
+}
+
+// ── NAVIGATION ──
+function odNavRoot() {
+  odState.stack = [];
+  odLoadFolder(null);
+  document.getElementById('od-breadcrumb').innerHTML = '<span class="od-crumb" onclick="odNavRoot()">BDD MEDIA</span>';
+}
+
+function odNavFolder(id, name) {
+  odState.stack.push({id, name});
+  odLoadFolder(id);
+  updateBreadcrumb();
+}
+
+function updateBreadcrumb() {
+  const bc = document.getElementById('od-breadcrumb');
+  bc.innerHTML = '<span class="od-crumb" onclick="odNavRoot()">BDD MEDIA</span>';
+  odState.stack.forEach((item, i) => {
+    bc.innerHTML += ` <span style="color:var(--lgt)">›</span> <span class="od-crumb" onclick="odNavTo(${i})">${item.name}</span>`;
+  });
+}
+
+function odNavTo(idx) {
+  odState.stack = odState.stack.slice(0, idx + 1);
+  const item = odState.stack[idx];
+  odLoadFolder(item.id);
+  updateBreadcrumb();
+}
+
+async function odLoadFolder(folderId) {
+  const grid = document.getElementById('od-grid');
+  grid.innerHTML = '<div class="od-state"><div class="od-spinner"></div>Chargement…</div>';
+  odState.selectedItem = null;
+  document.getElementById('od-confirm-btn').disabled = true;
+  document.getElementById('od-sel-info').textContent = 'Aucune photo sélectionnée';
+
+  if (odState.isDemo) {
+    await sleep(400); // simulate loading
+    renderOdDemoFolder(folderId);
+    return;
+  }
+
+  // Real Microsoft Graph API call (OneDrive for Business / SharePoint)
+  try {
+    let endpoint;
+    if (!folderId) {
+      // Root: list BDD MEDIA folder children
+      endpoint = `${OD_CONFIG.baseUrl}/me/drive/root:/${encodeURIComponent(OD_CONFIG.bddMediaFolder)}:/children?$select=id,name,folder,file,@microsoft.graph.downloadUrl&$expand=thumbnails($select=medium)&$orderby=name&$top=200`;
+    } else {
+      // Navigate by item ID
+      endpoint = `${OD_CONFIG.baseUrl}/me/drive/items/${folderId}/children?$select=id,name,folder,file,@microsoft.graph.downloadUrl&$expand=thumbnails($select=medium)&$orderby=name&$top=200`;
+    }
+    const res = await fetch(endpoint, {
+      headers: { 
+        'Authorization': `Bearer ${odState.token}`,
+        'Accept': 'application/json'
+      }
+    });
+    if (res.status === 401) {
+      // Token expired — re-authenticate
+      odState.token = null;
+      showOdBrowser();
+      document.getElementById('od-auth-panel').style.display = 'block';
+      document.getElementById('od-browser').style.display = 'none';
+      notify('🔑 Session expirée — reconnectez-vous', 'err');
+      return;
+    }
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(`${res.status}: ${errText}`);
+    }
+    const data = await res.json();
+    odState.allItems = data.value || [];
+    odState._folderIdIsPath = false;
+    renderOdItems(odState.allItems);
+  } catch(e) {
+    console.error('OneDrive error:', e);
+    grid.innerHTML = `<div class="od-state">❌ Erreur de connexion OneDrive<br><small style="color:#A8371D">${e.message}</small><br><br>
+      <button class="btn btn-r" style="margin:8px auto;display:block" onclick="odLogin()">Reconnecter</button>
+      <button class="btn btn-sec" style="margin:4px auto;display:block" onclick="odState.isDemo=true;odState.stack=[];odLoadFolder(null)">Mode démo</button></div>`;
+  }
+}
+
+function renderOdDemoFolder(folderId) {
+  if (!folderId) {
+    // Root: show destination folders
+    odState.allItems = OD_DEST_FOLDERS.map(f => ({
+      id: f.id, name: f.name, isFolder: true, _emoji: f.emoji, _count: f.count
+    }));
+    renderOdItems(odState.allItems);
+  } else {
+    // Show images for this destination
+    const imgs = OD_DEMO_IMGS_BY_DEST[folderId] || [];
+    const items = imgs.map(img => ({
+      id: img.id, name: img.name, isFolder: false, _demoUrl: img.url
+    }));
+    odState.allItems = items;
+    renderOdItems(items);
+  }
+}
+
+function renderOdItems(items) {
+  const grid = document.getElementById('od-grid');
+  const filterVal = document.getElementById('od-filter')?.value || '';
+  const searchVal = document.getElementById('od-search-inp')?.value?.toLowerCase() || '';
+
+  let filtered = items.filter(item => {
+    if (searchVal && !item.name.toLowerCase().includes(searchVal)) return false;
+    const isFolder = !!(item.folder || item.isFolder);
+    if (filterVal === 'folder' && !isFolder) return false;
+    if (filterVal === 'jpg' && (isFolder || !item.name.match(/\.(jpg|jpeg)$/i))) return false;
+    if (filterVal === 'png' && (isFolder || !item.name.match(/\.png$/i))) return false;
+    return true;
+  });
+
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="od-state">📂 Dossier vide ou aucun résultat</div>';
+    return;
+  }
+
+  // Sort: folders first
+  filtered.sort((a,b) => {
+    const aF = !!(a.folder||a.isFolder), bF = !!(b.folder||b.isFolder);
+    if (aF && !bF) return -1; if (!aF && bF) return 1;
+    return a.name.localeCompare(b.name);
+  });
+
+  grid.innerHTML = filtered.map(item => {
+    const isFolder = !!(item.folder || item.isFolder);
+    const thumb = item._demoUrl || item['@microsoft.graph.downloadUrl'] || null;
+    const selClass = odState.selectedItem?.id === item.id ? ' selected' : '';
+    if (isFolder) {
+      return `<div class="od-item folder${selClass}" onclick="odNavFolder('${item.id}','${item.name.replace(/'/g,"\\'")}')">
+        <span class="od-icon">📁</span>
+        <span class="od-name">${item.name}</span>
+        <span class="od-size">${(item.folder?.childCount || '—')} élément(s)</span>
+      </div>`;
+    } else {
+      const isImg = /\.(jpg|jpeg|png|webp|gif)$/i.test(item.name);
+      if (!isImg) return ''; // skip non-images
+      return `<div class="od-item${selClass}" onclick="odSelectItem(${JSON.stringify(JSON.stringify(item)).slice(1,-1)})">
+        ${thumb ? `<img class="od-img-thumb" src="${thumb}" loading="lazy" onerror="this.style.display='none'">` : `<span class="od-icon">🖼️</span>`}
+        <span class="od-name">${item.name}</span>
+      </div>`;
+    }
+  }).join('');
+}
+
+function odSelectItem(itemJson) {
+  let item;
+  try { item = JSON.parse(itemJson); } catch(e) { return; }
+  odState.selectedItem = item;
+  // Highlight selection
+  document.querySelectorAll('.od-item').forEach(el => el.classList.remove('selected'));
+  event?.currentTarget?.classList?.add('selected');
+  document.getElementById('od-sel-info').innerHTML = `Photo sélectionnée : <strong>${item.name}</strong>`;
+  document.getElementById('od-confirm-btn').disabled = false;
+}
+
+function odSearch(q) {
+  clearTimeout(odState.searchTimeout);
+  odState.searchTimeout = setTimeout(() => renderOdItems(odState.allItems), 300);
+}
+
+function odFilter(val) { renderOdItems(odState.allItems); }
+function odRefresh() { odLoadFolder(odState.stack.length ? odState.stack[odState.stack.length-1].id : null); }
+
+// ── CONFIRM SELECTION ──
+async function odConfirm() {
+  const item = odState.selectedItem;
+  const target = odState.currentTarget;
+  if (!item || !target) return;
+
+  document.getElementById('od-confirm-btn').disabled = true;
+  document.getElementById('od-confirm-btn').textContent = '⏳ Chargement…';
+
+  try {
+    let dataUrl = item._demoUrl || item['@microsoft.graph.downloadUrl'];
+    if (!dataUrl && odState.token) {
+      // Fetch download URL from Graph
+      const res = await fetch(`${OD_CONFIG.baseUrl}/me/drive/items/${item.id}?select=@microsoft.graph.downloadUrl`, {
+        headers: { Authorization: `Bearer ${odState.token}` }
+      });
+      const data = await res.json();
+      dataUrl = data['@microsoft.graph.downloadUrl'];
+    }
+    // Fetch image as base64
+    const imgRes = await fetch(dataUrl);
+    const blob = await imgRes.blob();
+    const b64 = await new Promise(resolve => {
+      const r = new FileReader(); r.onload = () => resolve(r.result); r.readAsDataURL(blob);
+    });
+
+    // Apply to the correct target
+    if (target.type === 'global') {
+      // cover or map
+      imgStore[target.key] = b64;
+      const thumb = document.getElementById('thumb_' + target.key);
+      const name  = document.getElementById('name_'  + target.key);
+      const zone  = document.getElementById('zone_'  + target.key);
+      const clr   = document.getElementById('clear_' + target.key);
+      if (thumb) { thumb.src = b64; thumb.classList.add('show'); }
+      if (name)  name.textContent = item.name;
+      if (zone)  zone.classList.add('has-image');
+      if (clr)   clr.style.display = 'block';
+    } else if (target.type === 'day') {
+      // day photo
+      const idx = target.idx; const slot = target.slot;
+      if (S.programme[idx]) S.programme[idx][slot] = b64;
+      const thumb = document.getElementById(`dthumb_${idx}_${slot}`);
+      const name  = document.getElementById(`dname_${idx}_${slot}`);
+      const zone  = document.getElementById(`dzone_${idx}_${slot}`);
+      const clr   = document.getElementById(`dclr_${idx}_${slot}`);
+      if (thumb) { thumb.src = b64; thumb.classList.add('show'); }
+      if (name)  name.textContent = item.name;
+      if (zone)  zone.classList.add('has-image');
+      if (clr)   clr.style.display = 'block';
+    }
+    notify('✅ Photo sélectionnée depuis OneDrive : ' + item.name, 'ok');
+    odClose();
+  } catch(e) {
+    notify('❌ Impossible de charger la photo. Vérifiez les permissions.', 'err');
+  } finally {
+    document.getElementById('od-confirm-btn').disabled = false;
+    document.getElementById('od-confirm-btn').textContent = '✅ Utiliser cette photo';
+  }
+}
+
+// ── SHARED LINK MODE ──
+// odLoadSharedLink removed — use Microsoft Sign In
+
+async function odConfirmWithData(b64, name) {
+  const target = odState.currentTarget;
+  if (!target) return;
+  if (target.type === 'global') {
+    imgStore[target.key] = b64;
+    const thumb = document.getElementById('thumb_' + target.key);
+    const nm    = document.getElementById('name_'  + target.key);
+    const zone  = document.getElementById('zone_'  + target.key);
+    const clr   = document.getElementById('clear_' + target.key);
+    if (thumb) { thumb.src = b64; thumb.classList.add('show'); }
+    if (nm)    nm.textContent = name;
+    if (zone)  zone.classList.add('has-image');
+    if (clr)   clr.style.display = 'block';
+  } else if (target.type === 'day') {
+    const idx = target.idx; const slot = target.slot;
+    if (S.programme[idx]) S.programme[idx][slot] = b64;
+    const thumb = document.getElementById(`dthumb_${idx}_${slot}`);
+    const nm    = document.getElementById(`dname_${idx}_${slot}`);
+    const zone  = document.getElementById(`dzone_${idx}_${slot}`);
+    const clr   = document.getElementById(`dclr_${idx}_${slot}`);
+    if (thumb) { thumb.src = b64; thumb.classList.add('show'); }
+    if (nm)    nm.textContent = name;
+    if (zone)  zone.classList.add('has-image');
+    if (clr)   clr.style.display = 'block';
+  }
+  odClose();
+}
+
+
+
+// ══════════════════════════════════════════════════════════════════
+// MICROSOFT 365 CENTRAL AUTH + FEATURES
+// ══════════════════════════════════════════════════════════════════
+
+const MS365 = {
+  token: null,
+  user: null,   // {displayName, mail, id}
+  photo: null,  // base64 avatar
+  isDemo: false,
+};
+
+// ── Restore from localStorage ──
+(function ms365Restore() {
+  try {
+    const tok = localStorage.getItem('stours_ms365_token');
+    const exp = parseInt(localStorage.getItem('stours_ms365_exp') || '0');
+    const usr = localStorage.getItem('stours_ms365_user');
+    if (tok && exp > Date.now() + 60000) {
+      MS365.token = tok;
+      MS365.user  = usr ? JSON.parse(usr) : null;
+      // Also propagate to libState and odState
+      libState.token    = tok;
+      libState.username = MS365.user?.mail || '';
+      odState.token     = tok;
+      requestAnimationFrame(ms365ShowConnected);
+    }
+  } catch(e) {}
+})();
+
+// ── SIGN IN (popup OAuth) ──
+async function msSignIn() {
+  // ── DEMO MODE (no App ID configured) ──
+  if (OD_CONFIG.clientId === 'YOUR_AZURE_APP_CLIENT_ID') {
+    MS365.isDemo    = true;
+    MS365.user      = { displayName:"S'TOURS Photos", mail:"votre-email@outlook.com", id:"demo" };
+    libState.isDemo = true;
+    libState.username = MS365.user.mail;
+    odState.isDemo  = true;
+    ms365ShowConnected();
+    ms365LoadRecentPhotos();
+    notify("🎯 Mode démo — aperçu OneDrive. Configurez votre App ID pour accéder à vos vraies photos BDD MEDIA.", 'ok');
+    return;
+  }
+
+  // ── REAL LOGIN — OneDrive Personnel (live.com / consumers) ──
+  // Opens: https://onedrive.live.com/login equivalent via OAuth2
+  const params = new URLSearchParams({
+    client_id:     OD_CONFIG.clientId,
+    response_type: 'token',
+    redirect_uri:  OD_CONFIG.redirectUri,
+    scope:         'Files.Read User.Read',
+    response_mode: 'fragment',
+    state:         'ms365_auth',
+    prompt:        'select_account',  // shows live.com / Outlook / Hotmail login
+  });
+
+  // consumers = comptes Microsoft personnels (live.com, hotmail, outlook.com)
+  const authUrl = `https://login.microsoftonline.com/consumers/oauth2/v2.0/authorize?${params}`;
+  const popup   = window.open(authUrl, 'onedrive_login',
+    'width=480,height=640,scrollbars=yes,left=' + ((screen.width-480)/2) + ',top=' + ((screen.height-640)/2));
+
+  notify('🔐 Fenêtre de connexion OneDrive ouverte…', 'info');
+
+  const poll = setInterval(() => {
+    try {
+      const hash = popup?.location?.hash || '';
+      if (hash.includes('access_token')) {
+        const p   = new URLSearchParams(hash.slice(1));
+        const tok = p.get('access_token');
+        const exp = Date.now() + (parseInt(p.get('expires_in') || '3600') * 1000);
+        popup.close(); clearInterval(poll);
+
+        MS365.token    = tok;
+        libState.token = tok;
+        odState.token  = tok;
+
+        // Get user profile from Graph
+        Promise.all([
+          fetch('https://graph.microsoft.com/v1.0/me?$select=displayName,mail,userPrincipalName,id', {
+            headers:{ Authorization:`Bearer ${tok}` }
+          }).then(r => r.json()),
+          fetch('https://graph.microsoft.com/v1.0/me/photo/$value', {
+            headers:{ Authorization:`Bearer ${tok}` }
+          }).then(r => r.ok ? r.blob() : null).catch(() => null)
+        ]).then(([user, photoBlob]) => {
+          // For personal accounts, mail may be userPrincipalName
+          user.mail = user.mail || user.userPrincipalName || user.id;
+          MS365.user = user;
+          libState.username = user.mail;
+          try {
+            localStorage.setItem('stours_ms365_token', tok);
+            localStorage.setItem('stours_ms365_exp',   String(exp));
+            localStorage.setItem('stours_ms365_user',  JSON.stringify(user));
+          } catch(e) {}
+          if (photoBlob) {
+            const fr = new FileReader();
+            fr.onload = e => { MS365.photo = e.target.result; ms365ShowConnected(); };
+            fr.readAsDataURL(photoBlob);
+          } else {
+            ms365ShowConnected();
+          }
+          ms365LoadRecentPhotos();
+          notify(`✅ Connecté ! Bienvenue ${user.displayName} — OneDrive BDD MEDIA accessible.`, 'ok');
+        }).catch(() => {
+          ms365ShowConnected();
+          notify('✅ Connecté à OneDrive !', 'ok');
+        });
+      }
+    } catch(e) {} // cross-origin during auth — expected
+    if (popup?.closed) { clearInterval(poll); }
+  }, 400);
+}
+
+// Handle fragment redirect token
+(function ms365HandleRedirect() {
+  const hash = window.location.hash;
+  if (hash.includes('access_token') && hash.includes('state=ms365_auth')) {
+    const p   = new URLSearchParams(hash.slice(1));
+    MS365.token = p.get('access_token');
+    history.replaceState(null, '', window.location.pathname);
+  }
+})();
+
+// ── SHOW CONNECTED STATE ──
+function ms365ShowConnected() {
+  // Header: hide signin button, show profile
+  document.getElementById('ms-header-signin').style.display  = 'none';
+  document.getElementById('ms-header-profile').style.display = 'flex';
+
+  const user = MS365.user || { displayName:'Équipe S'TOURS', mail:'votre-email@stours.ma' };
+  const initials = (user.mail||user.displayName||'JI').split('@')[0].slice(0,2).toUpperCase();
+
+  // Avatar
+  const avatarEl = document.getElementById('ms-header-avatar');
+  if (MS365.photo) {
+    avatarEl.innerHTML = `<img src="${MS365.photo}" alt="${initials}">`;
+  } else {
+    avatarEl.textContent = initials;
+  }
+
+  // Names
+  const uname = user.mail || user.displayName || 'votre-email@stours.ma';
+  document.getElementById('ms-header-uname').textContent = uname.split('@')[0];
+  document.getElementById('dd-name').textContent  = user.displayName || 'Équipe S'TOURS';
+  document.getElementById('dd-email').textContent = user.mail || 'votre-email@stours.ma';
+
+  // Status bar
+  document.getElementById('o365-status-bar').classList.add('show');
+  document.getElementById('o365-status-text').textContent =
+    `Connecté : ${user.displayName||uname} — Microsoft 365 · OneDrive · Outlook · Teams`;
+
+  // Features panel
+  document.getElementById('o365-features-panel').style.display = 'block';
+
+  // Pre-fill Outlook subject
+  const subject = document.getElementById('outlook-subject');
+  if (subject && !subject.value) subject.value = "Votre circuit S'TOURS — Maroc";
+}
+
+// ── SIGN OUT ──
+function msSignOut() {
+  MS365.token = null; MS365.user = null; MS365.photo = null; MS365.isDemo = false;
+  libState.token = null; libState.isDemo = false;
+  odState.token  = null; odState.isDemo  = false;
+  try {
+    ['stours_ms365_token','stours_ms365_exp','stours_ms365_user',
+     'stours_lib_token','stours_lib_token_exp','stours_lib_user',
+     'stours_od_token','stours_od_token_exp'].forEach(k => localStorage.removeItem(k));
+  } catch(e) {}
+  document.getElementById('ms-header-signin').style.display  = '';
+  document.getElementById('ms-header-profile').style.display = 'none';
+  document.getElementById('o365-status-bar').classList.remove('show');
+  document.getElementById('o365-features-panel').style.display = 'none';
+  document.getElementById('lib-signin-panel').style.display  = '';
+  document.getElementById('lib-browser-panel').style.display = 'none';
+  notify('Déconnecté de Microsoft 365', 'info');
+}
+
+// ── LOAD RECENT PHOTOS (BDD MEDIA) ──
+async function ms365LoadRecentPhotos() {
+  const strip = document.getElementById('od-recent-strip');
+  if (!strip) return;
+  strip.innerHTML = '<div style="font-size:12px;color:var(--mid);padding:8px">Chargement…</div>';
+
+  if (MS365.isDemo) {
+    await sleep(500);
+    // Show demo photos from all destinations
+    const demoPhotos = Object.values(OD_DEMO_IMGS_BY_DEST).flat().slice(0,12);
+    strip.innerHTML = demoPhotos.map(p => `
+      <div class="od-strip-card" onclick="libQuickInsertUrl('${p.url}','${p.name}')" title="${p.name}">
+        <img src="${p.url}" loading="lazy" onerror="this.style.display='none'">
+        <div class="od-strip-name">${p.name.replace(/_/g,' ').replace(/\.jpg|\.png/gi,'')}</div>
+      </div>`).join('');
+    return;
+  }
+
+  try {
+    // Get last modified images from BDD MEDIA
+    const res = await fetch(
+      `${OD_CONFIG.baseUrl}/me/drive/root:/${encodeURIComponent(OD_CONFIG.bddMediaFolder)}:/children?$select=id,name,file,@microsoft.graph.downloadUrl&$expand=thumbnails($select=small)&$orderby=lastModifiedDateTime+desc&$top=30`,
+      { headers: { Authorization:`Bearer ${MS365.token}` } }
+    );
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    const imgs = (data.value||[]).filter(f => /\.(jpg|jpeg|png|webp)$/i.test(f.name));
+    if (!imgs.length) { strip.innerHTML='<div style="font-size:12px;color:var(--mid);padding:8px">Aucune image récente</div>'; return; }
+    strip.innerHTML = imgs.map(f => {
+      const thumb = f.thumbnails?.[0]?.small?.url || f['@microsoft.graph.downloadUrl'];
+      return `<div class="od-strip-card" onclick="libQuickInsertFromItem('${f.id}','${f.name}')" title="${f.name}">
+        <img src="${thumb}" loading="lazy" onerror="this.style.display='none'">
+        <div class="od-strip-name">${f.name.replace(/\.(jpg|jpeg|png)/gi,'')}</div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    strip.innerHTML = '<div style="font-size:12px;color:var(--mid);padding:8px">Impossible de charger les photos récentes.</div>';
+  }
+}
+
+async function libQuickInsertUrl(url, name) {
+  if (!S.programme.length) { switchTab(1); notify('Ajoutez un jour d\'abord', 'info'); return; }
+  try {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    const b64 = await new Promise(r => { const fr=new FileReader(); fr.onload=e=>r(e.target.result); fr.readAsDataURL(blob); });
+    const idx  = S.programme.length - 1;
+    const slot = S.programme[idx].img1 ? 'img2' : 'img1';
+    S.programme[idx][slot] = b64;
+    renderDays();
+    notify(`✅ "${name}" → Jour ${idx+1}`, 'ok');
+    switchTab(1);
+  } catch(e) { notify('❌ Erreur de chargement', 'err'); }
+}
+
+async function libQuickInsertFromItem(itemId, name) {
+  try {
+    const r = await fetch(`${OD_CONFIG.baseUrl}/me/drive/items/${itemId}?select=@microsoft.graph.downloadUrl`, { headers:{Authorization:`Bearer ${MS365.token}`} });
+    const d = await r.json();
+    await libQuickInsertUrl(d['@microsoft.graph.downloadUrl'], name);
+  } catch(e) { notify('❌ Erreur de chargement', 'err'); }
+}
+
+// ── OPEN O365 APPS ──
+function msOpenApp(app) {
+  const urls = {
+    onedrive:   'https://onedrive.live.com',
+    outlook:    'https://outlook.office365.com/mail/',
+    sharepoint: 'https://stoursvoyages.sharepoint.com/',
+    teams:      'https://teams.microsoft.com/',
+    word:       'https://www.office.com/launch/word',
+    excel:      'https://www.office.com/launch/excel',
+  };
+  if (urls[app]) window.open(urls[app], '_blank');
+}
+
+// ── SHARE VIA OUTLOOK ──
+function msShareViaOutlook() {
+  const to      = document.getElementById('outlook-to')?.value || '';
+  const circuit = gv('nom_circuit') || "Circuit S'TOURS";
+  const dest    = gv('destination') || 'Maroc';
+  const duree   = gv('duree') || '';
+  const subj    = encodeURIComponent(`Votre circuit S'TOURS — ${circuit}`);
+  const body    = encodeURIComponent(
+    `Bonjour,\n\nVeuillez trouver ci-joint la présentation de votre circuit : ${circuit} — ${dest}${duree?' ('+duree+')':''}.\n\nCordialement,\nS'TOURS DMC\nwww.stours.ma | +212 5 22 95 40 00`
+  );
+  const url = `https://outlook.office365.com/mail/deeplink/compose?to=${encodeURIComponent(to)}&subject=${subj}&body=${body}`;
+  window.open(url, '_blank');
+  notify('📧 Email Outlook ouvert', 'ok');
+}
+
+// ── SHARE VIA TEAMS ──
+function msShareViaTeams() {
+  const circuit = gv('nom_circuit') || "Circuit S'TOURS";
+  const dest    = gv('destination') || 'Maroc';
+  const msg     = encodeURIComponent(`📋 Nouveau circuit S'TOURS : *${circuit}* — ${dest} | Généré depuis le Générateur PPT S'TOURS`);
+  window.open(`https://teams.microsoft.com/l/chat/0/0?message=${msg}`, '_blank');
+  notify('💬 Teams ouvert', 'ok');
+}
+
+// ── SAVE TO ONEDRIVE ──
+async function msSaveToDrive() {
+  notify('💾 Fonctionnalité disponible avec App Azure configurée — générez d\'abord le PPT puis sauvegardez manuellement.', 'info');
+}
+
+// ── Patch libLogin to use shared MS365 token ──
+const _origLibLogin = libLogin;
+window.libLogin = async function() {
+  if (MS365.token || MS365.isDemo) {
+    // Already signed in globally — reuse token
+    libState.token    = MS365.token;
+    libState.isDemo   = MS365.isDemo;
+    libState.username = MS365.user?.mail || '';
+    showLibBrowser();
+    libLoadFolder(null);
+    return;
+  }
+  await msSignIn();
+  if (MS365.token || MS365.isDemo) {
+    libState.token    = MS365.token;
+    libState.isDemo   = MS365.isDemo;
+    libState.username = MS365.user?.mail || '';
+    showLibBrowser();
+    libLoadFolder(null);
+  }
+};
+
+
+
+// ══════════════════════════════════════════════════════════════════
+// ONEDRIVE SHARING LINK — aucun Azure AD requis
+// ══════════════════════════════════════════════════════════════════
+
+function libShareUrlChanged(val) {
+  const btn = document.getElementById('lib-share-btn');
+  const status = document.getElementById('lib-share-status');
+  const isValid = val.trim().length > 10 && (val.includes('1drv.ms') || val.includes('onedrive') || val.includes('sharepoint'));
+  if (btn) btn.style.opacity = isValid ? '1' : '.5';
+  if (status) status.textContent = isValid ? '✅ Lien OneDrive reconnu — cliquez Connecter' : '';
+}
+
+async function libConnectShare() {
+  const url = document.getElementById('lib-share-url')?.value?.trim();
+  if (!url) { notify('Collez un lien de partage OneDrive', 'err'); return; }
+
+  const status = document.getElementById('lib-share-status');
+  if (status) status.textContent = '⏳ Connexion en cours…';
+
+  try {
+    // Encode share URL for Microsoft Graph /shares endpoint
+    const shareToken = btoa(url).replace(/=/g,'').replace(/\+/g,'-').replace(/\//g,'_');
+    const endpoint = `https://graph.microsoft.com/v1.0/shares/u!${shareToken}/driveItem/children?$select=id,name,folder,file,@microsoft.graph.downloadUrl&$expand=thumbnails($select=medium)&$orderby=name&$top=200`;
+
+    const res = await fetch(endpoint);
+
+    if (res.status === 401 || res.status === 403) {
+      // Link requires authentication — try as root item
+      const rootRes = await fetch(`https://graph.microsoft.com/v1.0/shares/u!${shareToken}/driveItem?$select=id,name,folder`);
+      if (!rootRes.ok) throw new Error('Ce lien nécessite une connexion Microsoft. Assurez-vous de choisir "Toute personne ayant le lien" lors du partage.');
+    }
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err?.error?.message || `Erreur ${res.status}`);
+    }
+
+    const data = await res.json();
+    const items = data.value || [];
+
+    // Save link for future sessions
+    try { localStorage.setItem('stours_bdd_share_url', url); } catch(e) {}
+
+    // Switch to browser
+    libState.token      = null;
+    libState.isDemo     = false;
+    libState.shareToken = shareToken;
+    libState.shareUrl   = url;
+    libState.username   = 'BDD MEDIA · OneDrive';
+    libState.allItems   = items;
+
+    showLibBrowser();
+    libRenderItems(items);
+    document.getElementById('lib-breadcrumb').innerHTML = '<span class="lib-crumb" onclick="libNavRoot()">☁️ BDD MEDIA</span>';
+
+    if (status) status.textContent = '';
+    notify(`✅ ${items.length} éléments chargés depuis votre BDD MEDIA !`, 'ok');
+
+    // Update header profile to show connected
+    MS365.user = { displayName: 'BDD MEDIA', mail: 'OneDrive connecté' };
+    ms365ShowConnected();
+
+  } catch(err) {
+    if (status) status.textContent = '❌ ' + err.message;
+    notify('❌ ' + err.message, 'err');
+  }
+}
+
+// Navigate folder via share token
+async function libLoadFolderShare(itemId) {
+  document.getElementById('lib-content').innerHTML = '<div class="lib-loading"><div class="lib-spinner"></div>Chargement…</div>';
+  try {
+    let endpoint;
+    if (!itemId) {
+      endpoint = `https://graph.microsoft.com/v1.0/shares/u!${libState.shareToken}/driveItem/children?$select=id,name,folder,file,@microsoft.graph.downloadUrl&$expand=thumbnails($select=medium)&$orderby=name&$top=200`;
+    } else {
+      // Use item ID navigation (no auth needed if from public share)
+      endpoint = `https://graph.microsoft.com/v1.0/shares/u!${libState.shareToken}/driveItem/children?$select=id,name,folder,file,@microsoft.graph.downloadUrl&$expand=thumbnails($select=medium)&$orderby=name&$top=200`;
+      // For subfolder: use the item endpoint with parent share
+      endpoint = `https://graph.microsoft.com/v1.0/drive/items/${itemId}/children?$select=id,name,folder,file,@microsoft.graph.downloadUrl&$expand=thumbnails($select=medium)&$orderby=name&$top=200`;
+    }
+    const res = await fetch(endpoint, libState.token ? { headers:{ Authorization:`Bearer ${libState.token}` } } : {});
+    if (!res.ok) throw new Error(await res.text());
+    const data = await res.json();
+    libState.allItems = data.value || [];
+    libRenderItems(libState.allItems);
+  } catch(e) {
+    document.getElementById('lib-content').innerHTML = `<div class="lib-loading">❌ ${e.message}<br><button class="btn btn-sec" style="margin-top:10px" onclick="libNavRoot()">↩ Retour</button></div>`;
+  }
+}
+
+// Override libLoadFolder to use share method when applicable
+const _origLibLoadFolder = libLoadFolder;
+window.libLoadFolder = async function(folderId) {
+  if (libState.shareToken && !libState.token && !libState.isDemo) {
+    await libLoadFolderShare(folderId);
+    return;
+  }
+  await _origLibLoadFolder(folderId);
+};
+
+// Restore saved link on init
+function libCheckSavedLink() {
+  try {
+    const saved = localStorage.getItem('stours_bdd_share_url');
+    if (saved) {
+      const row  = document.getElementById('lib-saved-link-row');
+      const info = document.getElementById('lib-saved-link-info');
+      const inp  = document.getElementById('lib-share-url');
+      if (row)  row.style.display  = 'flex';
+      if (info) info.textContent   = '🔗 Lien mémorisé : ' + saved.slice(0,40) + '…';
+      if (inp)  inp.value          = saved;
+      libShareUrlChanged(saved);
+    }
+  } catch(e) {}
+}
+
+function libUseSavedLink() {
+  libConnectShare();
+}
+
+function libClearSavedLink() {
+  try { localStorage.removeItem('stours_bdd_share_url'); } catch(e) {}
+  document.getElementById('lib-saved-link-row').style.display = 'none';
+  const inp = document.getElementById('lib-share-url');
+  if (inp) inp.value = '';
+}
+
+function libDemoMode() {
+  libState.isDemo   = true;
+  libState.shareToken = null;
+  libState.username = 'votre-email@stours.ma';
+  MS365.user = { displayName:"S'TOURS Demo", mail:"votre-email@stours.ma" };
+  showLibBrowser();
+  libLoadFolder(null);
+  ms365ShowConnected();
+  notify("🎯 Mode démo — configurez votre lien OneDrive pour accéder à vos vraies photos.", 'info');
+}
+
+
+// ── INIT ──
+renderDays();
+applyTranslations();
+libInitIfLoggedIn();
+
+// ══════════════════════════════════════════════════════════════════
+// PWA – Service Worker + Install Prompt
+// ══════════════════════════════════════════════════════════════════
+
+// Inline manifest via blob
+const manifest = {
+  name: "S'TOURS – Générateur de Circuit PPT",
+  short_name: "S'TOURS PPT",
+  description: "Créez vos présentations de circuits touristiques professionnelles",
+  start_url: "./",
+  display: "standalone",
+  orientation: "portrait",
+  background_color: "#EAE2CA",
+  theme_color: "#A8371D",
+  icons: [
+    {
+      src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='38' fill='%23A8371D'/%3E%3Ctext x='96' y='115' text-anchor='middle' font-size='90' font-family='serif'%3E%E2%9C%88%3C/text%3E%3Ctext x='96' y='158' text-anchor='middle' font-size='22' font-family='sans-serif' fill='white' font-weight='bold'%3ES'TOURS%3C/text%3E%3C/svg%3E",
+      sizes: "192x192", type: "image/svg+xml", purpose: "any maskable"
+    },
+    {
+      src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%23A8371D'/%3E%3Ctext x='256' y='300' text-anchor='middle' font-size='240' font-family='serif'%3E%E2%9C%88%3C/text%3E%3Ctext x='256' y='420' text-anchor='middle' font-size='60' font-family='sans-serif' fill='white' font-weight='bold'%3ES'TOURS%3C/text%3E%3C/svg%3E",
+      sizes: "512x512", type: "image/svg+xml", purpose: "any maskable"
+    }
+  ]
+};
+const manifestBlob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
+const manifestURL = URL.createObjectURL(manifestBlob);
+document.getElementById('pwa-manifest').href = manifestURL;
+
+// Service Worker inline via blob
+const swCode = `
+const CACHE = 'stours-ppt-v1';
+const OFFLINE_URLS = [self.location.href];
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(OFFLINE_URLS)).catch(()=>{}));
+  self.skipWaiting();
+});
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
+  self.clients.claim();
+});
+self.addEventListener('fetch', e => {
+  e.respondWith(caches.match(e.request).then(r => r || fetch(e.request).catch(() => caches.match(e.request))));
+});
+`;
+try {
+  const swBlob = new Blob([swCode], {type: 'application/javascript'});
+  const swURL = URL.createObjectURL(swBlob);
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register(swURL, {scope: './'}).catch(()=>{});
+  }
+} catch(e) {}
+
+// ── Install prompt (Android Chrome) ──
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  showInstallBanner();
+});
+
+window.addEventListener('appinstalled', () => {
+  hideInstallBanner();
+  notify("✅ Application installée avec succès !", 'ok');
+});
+
+function showInstallBanner() {
+  document.getElementById('install-banner').style.display = 'flex';
+}
+function hideInstallBanner() {
+  document.getElementById('install-banner').style.display = 'none';
+}
+function installApp() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
+    hideInstallBanner();
+  }
+}
+
+// ── iOS install hint (Safari) ──
+function isIOS() {
+  return /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+}
+function isInStandaloneMode() {
+  return window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
+}
+if (isIOS() && !isInStandaloneMode()) {
+  setTimeout(() => {
+    document.getElementById('ios-banner').style.display = 'flex';
+  }, 2000);
+}
+
+</script>
+
+
+<!-- ══ ONEDRIVE PICKER MODAL ══ -->
+<div class="od-modal" id="od-modal">
+  <div class="od-sheet">
+    <div class="od-header">
+      <h3>☁️ S'TOURS — Bibliothèque Photos OneDrive</h3>
+      <button class="od-close" onclick="odClose()">×</button>
+    </div>
+    <!-- Auth panel (shown when not logged in) -->
+    <div id="od-auth-panel" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;gap:16px">
+
+      <!-- Microsoft 365 logo -->
+      <div style="width:72px;height:72px;background:#fff;border-radius:18px;box-shadow:0 4px 20px rgba(0,0,0,.13);display:flex;align-items:center;justify-content:center">
+        <svg width="40" height="40" viewBox="0 0 21 21"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
+      </div>
+
+      <div>
+        <div style="font-size:18px;font-weight:700;color:#141414;margin-bottom:5px">Bibliothèque Photos</div>
+        <div style="font-size:13px;color:#6B6B6B;line-height:1.55">Connectez-vous avec votre compte <strong style="color:#141414">Office 365 S'TOURS</strong><br>pour accéder à votre dossier <strong style="color:#0078D4">BDD MEDIA</strong>.</div>
+      </div>
+
+      <!-- BIG O365 SIGN IN -->
+      <button onclick="msSignIn()" style="display:inline-flex;align-items:center;gap:0;border:none;border-radius:4px;cursor:pointer;overflow:hidden;box-shadow:0 3px 14px rgba(0,0,0,.25);font-family:'Segoe UI',Arial,sans-serif;width:min(300px,100%);transition:box-shadow .15s,transform .1s" onmouseover="this.style.boxShadow='0 6px 22px rgba(0,0,0,.32)';this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 3px 14px rgba(0,0,0,.25)';this.style.transform='none'">
+        <div style="background:#2F2F2F;width:46px;height:46px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="22" height="22" viewBox="0 0 21 21"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
+        </div>
+        <div style="background:#2F2F2F;color:#fff;padding:0 20px;height:46px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;flex:1;border-left:1px solid rgba(255,255,255,.12)">
+          <span style="font-size:14px;font-weight:600;letter-spacing:.01em">Sign in with Microsoft</span>
+          <span style="font-size:10.5px;color:rgba(255,255,255,.6);margin-top:1px">OneDrive · Outlook · Microsoft 365</span>
+        </div>
+      </button>
+
+      <p style="font-size:10.5px;color:#aaa;line-height:1.6;max-width:280px">🔒 Authentification sécurisée Microsoft OAuth2<br>Vos identifiants ne transitent jamais par l'app<br><strong style="color:#141414">S'TOURS DMC</strong> · stours.ma</p>
+    </div>
+    <!-- File browser (shown when logged in) -->
+    <div id="od-browser" style="display:none;flex-direction:column;flex:1;overflow:hidden">
+      <div class="od-toolbar">
+        <input type="text" class="od-search" id="od-search-inp" placeholder="Rechercher dans BDD MEDIA…" oninput="odSearch(this.value)">
+        <select id="od-filter" style="padding:7px 10px;border:1.5px solid var(--line);border-radius:8px;font-size:12px;font-family:inherit;background:#fff;cursor:pointer" onchange="odFilter(this.value)">
+          <option value="">Tous types</option>
+          <option value="jpg">JPG / JPEG</option>
+          <option value="png">PNG</option>
+          <option value="folder">Dossiers</option>
+        </select>
+        <button class="btn btn-sec" style="padding:6px 12px;font-size:11.5px" onclick="odRefresh()">↻</button>
+      </div>
+      <div id="od-suggestion-badge" style="display:none;background:rgba(168,55,29,.09);color:#A8371D;font-size:11.5px;font-weight:600;padding:6px 16px;border-bottom:1px solid #e8c9c2">
+      </div>
+      <div class="od-breadcrumb" id="od-breadcrumb">
+        <span class="od-crumb" onclick="odNavRoot()">BDD MEDIA</span>
+      </div>
+      <div class="od-grid" id="od-grid">
+        <div class="od-state"><div class="od-spinner"></div>Chargement…</div>
+      </div>
+    </div>
+    <div class="od-footer">
+      <div class="od-sel-info" id="od-sel-info">Aucune photo sélectionnée</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-sec" onclick="odClose()" style="padding:9px 18px;font-size:13px">Annuler</button>
+        <button class="btn btn-r" id="od-confirm-btn" onclick="odConfirm()" disabled style="padding:9px 18px;font-size:13px">✅ Utiliser cette photo</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Android install banner -->
+<div id="install-banner" style="display:none;position:fixed;top:70px;left:12px;right:12px;z-index:500;background:#1a1a1a;color:#fff;border-radius:14px;padding:14px 16px;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,0.35);border:1px solid #333;">
+  <div style="background:#A8371D;width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">✈</div>
+  <div style="flex:1;min-width:0">
+    <div style="font-weight:700;font-size:14px;color:#FFFEE9">Installer S'TOURS PPT</div>
+    <div style="font-size:11.5px;color:#999;margin-top:2px">Accès rapide depuis l'écran d'accueil</div>
+  </div>
+  <button onclick="installApp()" style="background:#A8371D;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-weight:700;font-size:13px;cursor:pointer;flex-shrink:0;font-family:inherit">Installer</button>
+  <button onclick="hideInstallBanner()" style="background:none;border:none;color:#666;cursor:pointer;font-size:20px;padding:0 4px;flex-shrink:0">×</button>
+</div>
+
+<!-- iOS Safari install hint -->
+<div id="ios-banner" style="display:none;position:fixed;bottom:70px;left:12px;right:12px;z-index:500;background:#1a1a1a;color:#fff;border-radius:14px;padding:16px;flex-direction:column;gap:10px;box-s
