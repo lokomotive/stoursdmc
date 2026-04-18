@@ -1,0 +1,81 @@
+version: "3.9"
+
+services:
+
+  # ── PostgreSQL ─────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER:     stours
+      POSTGRES_PASSWORD: stours
+      POSTGRES_DB:       stours_studio
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U stours"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Redis ──────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── FastAPI Backend ────────────────────────────────────────────
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL:       postgresql://stours:stours@db:5432/stours_studio
+      REDIS_URL:          redis://redis:6379/0
+      ANTHROPIC_API_KEY:  ${ANTHROPIC_API_KEY:-}
+      ENVIRONMENT:        development
+      DEBUG:              "true"
+      SECRET_KEY:         ${SECRET_KEY:-change-me-in-dev}
+      JWT_SECRET_KEY:     ${JWT_SECRET_KEY:-change-me-in-dev}
+      CORS_ORIGINS:       http://localhost:5173,http://localhost:3000
+    volumes:
+      - ./backend:/app
+      - exports_data:/app/exports
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "alembic upgrade head &&
+             python ../scripts/seed_data.py &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+
+  # ── React Frontend ─────────────────────────────────────────────
+  frontend:
+    image: node:20-alpine
+    working_dir: /app
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      VITE_API_URL: http://localhost:8000
+    command: sh -c "npm install && npm run dev -- --host"
+    depends_on:
+      - api
+
+volumes:
+  pg_data:
+  exports_data:
